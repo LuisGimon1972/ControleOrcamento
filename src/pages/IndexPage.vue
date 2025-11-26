@@ -1666,44 +1666,32 @@ async function excluirOrcamento(id) {
 // EDITAR ORÇAMENTO
 
 const modoEdicao = ref(false)
-let idOrcamentoEdicao = null
+const idOrcamentoEdicao = ref(null)
 
 const editarOrcamento = async (row) => {
-  ocultar()
-  criarOrcamento.value = true // mostra o formulário
+  console.log('DADOS ENVIADOS PARA EDITAR:', row)
 
-  // Salvar ID do orçamento para atualizar depois
+  criarOrcamento.value = true
+  listarOrcamento.value = false
+
   idOrcamentoEdicao.value = row.id
 
-  // Preencher campos principais
   clienteSelecionado.value = row.clienteId
   validade.value = row.validade
-  observacao.value = row.observacao
-  desconto.value = row.desconto
-  acrescimo.value = row.acrescimo
+  observacao.value = row.observacao || ''
+  desconto.value = row.desconto || 0
+  acrescimo.value = row.acrescimo || 0
 
-  // Carregar itens do orçamento
   await carregarItensDoOrcamento(row.id)
 
-  // Recalcular os totais
   atualizarTotais()
 }
 
-const carregarItensDoOrcamento = async (id) => {
-  try {
-    const resp = await fetch(`http://localhost:3000/orcamentos/${id}/itens`)
-    const dados = await resp.json()
+async function carregarItensDoOrcamento(id) {
+  const res = await fetch(`${API_URL}/orcamentos/${id}`)
+  const dados = await res.json()
 
-    itensOrcamento.value = dados.map((item) => ({
-      controle: item.controle,
-      nome: item.nome,
-      quantidade: item.quantidade,
-      preco: item.preco,
-      total: item.quantidade * item.preco,
-    }))
-  } catch (err) {
-    console.error('Erro ao carregar itens:', err)
-  }
+  itensOrcamento.value = dados.itens || []
 }
 
 async function salvarEdicao() {

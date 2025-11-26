@@ -423,26 +423,29 @@ app.get('/orcamentos/:id', (req, res) => {
     db.all(`SELECT * FROM itensOrcamento WHERE orcamentoId = ?`, [id], (err, itens) => {
       if (err) return res.status(500).json({ error: err.message })
 
-      res.json({ ...orcamento, itens })
+      res.json({
+        ...orcamento,
+        itens,
+      })
     })
   })
 })
 
 app.put('/orcamentos/:id', (req, res) => {
   const { id } = req.params
-  const { validade, observacoes, desconto, acrescimo, status } = req.body
+  const { numero, clienteId, validade, observacoes, desconto, acrescimo } = req.body
 
-  const sql = `
-    UPDATE orcamentos
-    SET validade=?, observacoes=?, desconto=?, acrescimo=?, status=?
-    WHERE id=?
-  `
+  db.run(
+    `UPDATE orcamentos
+     SET numero=?, clienteId=?, validade=?, observacoes=?, desconto=?, acrescimo=?
+     WHERE id=?`,
+    [numero, clienteId, validade, observacoes, desconto, acrescimo, id],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message })
 
-  db.run(sql, [validade, observacoes, desconto, acrescimo, status, id], function (err) {
-    if (err) return res.status(500).json({ error: err.message })
-
-    res.json({ updated: this.changes })
-  })
+      res.json({ success: true, updated: this.changes })
+    },
+  )
 })
 
 app.delete('/orcamentos/:id', (req, res) => {
