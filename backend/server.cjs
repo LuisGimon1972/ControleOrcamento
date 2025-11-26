@@ -406,11 +406,21 @@ app.post('/orcamentos', (req, res) => {
 })
 
 app.get('/orcamentos', (req, res) => {
-  db.all(`SELECT * FROM orcamentos ORDER BY id ASC`, [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message })
-
-    res.json(rows)
-  })
+  db.all(
+    `SELECT
+       o.*,
+       c.nome AS clienteNome
+     FROM orcamentos o
+     LEFT JOIN clientes c ON c.id = o.clienteId
+     ORDER BY o.id DESC`,
+    [],
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: err.message })
+      }
+      res.json(rows)
+    },
+  )
 })
 
 app.get('/orcamentos/:id', (req, res) => {
@@ -432,18 +442,36 @@ app.get('/orcamentos/:id', (req, res) => {
 })
 
 app.put('/orcamentos/:id', (req, res) => {
-  const { id } = req.params
-  const { numero, clienteId, validade, observacoes, desconto, acrescimo } = req.body
+  const id = req.params.id
+  const { clienteId, validade, observacoes, desconto, acrescimo, valorTotalItens, valorTotal } =
+    req.body
 
   db.run(
     `UPDATE orcamentos
-     SET numero=?, clienteId=?, validade=?, observacoes=?, desconto=?, acrescimo=?
+     SET clienteId=?, validade=?, observacoes=?, desconto=?, acrescimo=?, valorTotalItens=?, valorTotal=?
      WHERE id=?`,
-    [numero, clienteId, validade, observacoes, desconto, acrescimo, id],
+    [clienteId, validade, observacoes, desconto, acrescimo, valorTotalItens, valorTotal, id],
     function (err) {
       if (err) return res.status(500).json({ error: err.message })
 
-      res.json({ success: true, updated: this.changes })
+      // 🔥 Agora retornamos o orçamento atualizado com JOIN
+      db.get(
+        `SELECT
+           o.*,
+           c.nome AS clienteNome
+         FROM orcamentos o
+         LEFT JOIN clientes c ON c.id = o.clienteId
+         WHERE o.id = ?`,
+        [id],
+        (err2, row) => {
+          if (err2) return res.status(500).json({ error: err2.message })
+
+          res.json({
+            success: true,
+            orcamento: row,
+          })
+        },
+      )
     },
   )
 })

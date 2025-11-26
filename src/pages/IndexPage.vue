@@ -1566,10 +1566,25 @@ async function salvarOrcamento() {
   }
 
   try {
-    const res = await axios.post('/orcamentos', payload)
-    console.log('Orçamento salvo:', res.data)
+    let res
 
-    showToastv('Orçamento salvo com sucesso!', 3000)
+    // --- 🚀 SE ESTIVER EDITANDO (UPDATE) ---
+    if (idOrcamentoEdicao.value) {
+      console.log('Atualizando orçamento ID:', idOrcamentoEdicao.value)
+
+      res = await axios.put(`/orcamentos/${idOrcamentoEdicao.value}`, payload)
+
+      showToastv('Orçamento atualizado com sucesso!', 3000)
+    }
+    // --- 🚀 SE FOR UM NOVO ORÇAMENTO (CREATE) ---
+    else {
+      res = await axios.post('/orcamentos', payload)
+
+      showToastv('Orçamento criado com sucesso!', 3000)
+    }
+
+    console.log('Retorno:', res.data)
+
     limparOrcamento()
     carregarOrcamento()
   } catch (error) {
@@ -1623,7 +1638,10 @@ const orcamentos = ref([])
 const colunasOrcamentosg = [
   { name: 'id', label: 'ID', field: 'id', align: 'left' },
   { name: 'numero', label: 'Número', field: 'numero', align: 'left' },
-  { name: 'clienteId', label: 'Cliente', field: 'clienteId', align: 'left' },
+
+  // 🔥 AQUI ESTÁ A CORREÇÃO: agora usa clienteNome
+  { name: 'cliente', label: 'Cliente', field: 'clienteNome', align: 'left' },
+
   { name: 'dataCriacao', label: 'Data', field: 'dataCriacao', align: 'left' },
   { name: 'validade', label: 'Validade', field: 'validade', align: 'left' },
   { name: 'valorTotalItens', label: 'Itens', field: 'valorTotalItens', align: 'right' },
@@ -1673,17 +1691,13 @@ const editarOrcamento = async (row) => {
 
   criarOrcamento.value = true
   listarOrcamento.value = false
-
   idOrcamentoEdicao.value = row.id
-
   clienteSelecionado.value = row.clienteId
   validade.value = row.validade
   observacao.value = row.observacao || ''
   desconto.value = row.desconto || 0
   acrescimo.value = row.acrescimo || 0
-
   await carregarItensDoOrcamento(row.id)
-
   atualizarTotais()
 }
 
@@ -1691,7 +1705,14 @@ async function carregarItensDoOrcamento(id) {
   const res = await fetch(`${API_URL}/orcamentos/${id}`)
   const dados = await res.json()
 
-  itensOrcamento.value = dados.itens || []
+  itensOrcamento.value = dados.itens.map((item) => ({
+    controle: item.id,
+    produtoId: item.produtoId,
+    nome: item.descricao,
+    quantidade: item.quantidade,
+    valorUnit: item.valorUnit,
+    total: item.total,
+  }))
 }
 
 async function salvarEdicao() {
