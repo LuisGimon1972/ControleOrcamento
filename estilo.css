@@ -7,7 +7,7 @@ body {
   overflow-x: hidden;
   font-family: Arial, sans-serif;
 }
-
+/*Estilos*/
 .layout-principal {
   display: flex;
   flex-direction: column;
