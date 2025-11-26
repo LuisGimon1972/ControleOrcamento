@@ -1567,19 +1567,15 @@ async function salvarOrcamento() {
 
   try {
     let res
-
-    // --- 🚀 SE ESTIVER EDITANDO (UPDATE) ---
     if (idOrcamentoEdicao.value) {
       console.log('Atualizando orçamento ID:', idOrcamentoEdicao.value)
-
       res = await axios.put(`/orcamentos/${idOrcamentoEdicao.value}`, payload)
-
       showToastv('Orçamento atualizado com sucesso!', 3000)
-    }
-    // --- 🚀 SE FOR UM NOVO ORÇAMENTO (CREATE) ---
-    else {
+      ocultar()
+      carregarOrcamento()
+      listarOrcamento.value = true
+    } else {
       res = await axios.post('/orcamentos', payload)
-
       showToastv('Orçamento criado com sucesso!', 3000)
     }
 
@@ -1611,10 +1607,8 @@ watch(
     if (!novaData) return
     const [dia, mes, ano] = novaData.split('-')
     const dataFormatada = `${ano}-${mes}-${dia}`
-
     const hoje = new Date()
     hoje.setHours(0, 0, 0, 0)
-
     const dataEscolhida = new Date(dataFormatada + 'T00:00:00')
 
     if (dataEscolhida < hoje) {
@@ -1736,12 +1730,11 @@ async function salvarEdicao() {
   const resultado = await res.json()
 
   if (resultado.success) {
-    alert('sdsafdudfyu')
-    showToastv('Orçamento atualizado com sucesso!', 2000)
+    // showToastv('Orçamento atualizado com sucesso!', 2000)
     ocultar()
     listarOrcamento.value = true
     //modoEdicao.value = false
-    alert('sdsafdudfyu')
+
     carregarOrcamento() // atualizar tabela
   } else {
     showToast('Erro ao atualizar orçamento!')
