@@ -195,7 +195,7 @@
         <!-- ===================== -->
         <div v-if="criarOrcamento" class="q-pa-md">
           <!-- TÍTULO -->
-          <div style="margin-bottom: 50px" class="text-h4 text-primary q-mb-md">Novo Orçamento</div>
+          <div style="margin-bottom: 50px" class="text-h4 text-primary q-mb-md">Orçamento</div>
 
           <!-- SELEÇÃO DO CLIENTE -->
           <div style="margin-bottom: 20px" class="row q-col-gutter-md">
