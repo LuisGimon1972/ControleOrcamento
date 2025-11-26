@@ -330,7 +330,7 @@ app.post('/orcamentos', (req, res) => {
   } = req.body
 
   // -----------------------------
-  // Gerar número sequencial ORC0001 Original
+  // Gerar número sequencial ORC0001 Original Original
   // -----------------------------
   db.get(`SELECT numero FROM orcamentos ORDER BY id DESC LIMIT 1`, (err, row) => {
     if (err) return res.status(500).json({ error: err.message })
