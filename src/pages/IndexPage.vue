@@ -158,6 +158,7 @@
           @click="
             () => {
               ocultar()
+              limparOrcamento()
               menuAtivo = 'criaorca'
               criarOrcamento = true
             }
