@@ -1736,9 +1736,12 @@ async function salvarEdicao() {
   const resultado = await res.json()
 
   if (resultado.success) {
-    showToast('Orçamento atualizado com sucesso!')
-    criarOrcamento.value = false
-    modoEdicao.value = false
+    alert('sdsafdudfyu')
+    showToastv('Orçamento atualizado com sucesso!', 2000)
+    ocultar()
+    listarOrcamento.value = true
+    //modoEdicao.value = false
+    alert('sdsafdudfyu')
     carregarOrcamento() // atualizar tabela
   } else {
     showToast('Erro ao atualizar orçamento!')
