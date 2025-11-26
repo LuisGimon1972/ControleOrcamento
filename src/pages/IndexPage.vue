@@ -845,6 +845,7 @@
   <div id="toastv" class="toastv" style="display: none"></div>
 </template>
 <script setup>
+//Importaçoes
 import logo from 'src/assets/logo.png'
 import usuario from 'src/assets/usuario.png'
 import { ref, onMounted, watch } from 'vue'
