@@ -348,7 +348,14 @@
           </div>
 
           <!-- BOTÃO SALVAR -->
-          <q-btn label="Salvar" color="primary" icon="save" size="md" @click="salvarOrcamento" />
+          <q-btn
+            :label="modoEdicao ? 'Salvar Alterações' : 'Salvar Orçamento'"
+            color="primary"
+            icon="save"
+            size="md"
+            @click="modoEdicao ? salvarEdicao() : salvarOrcamento()"
+          />
+
           <q-btn
             label="Limpar"
             color="negative"
@@ -1653,6 +1660,79 @@ async function excluirOrcamento(id) {
   } catch (error) {
     console.error('Erro ao excluir orçamento:', error)
     showToast('Erro ao excluir orçamento!', 1500)
+  }
+}
+
+// EDITAR ORÇAMENTO
+
+const modoEdicao = ref(false)
+let idOrcamentoEdicao = null
+
+const editarOrcamento = async (row) => {
+  ocultar()
+  criarOrcamento.value = true // mostra o formulário
+
+  // Salvar ID do orçamento para atualizar depois
+  idOrcamentoEdicao.value = row.id
+
+  // Preencher campos principais
+  clienteSelecionado.value = row.clienteId
+  validade.value = row.validade
+  observacao.value = row.observacao
+  desconto.value = row.desconto
+  acrescimo.value = row.acrescimo
+
+  // Carregar itens do orçamento
+  await carregarItensDoOrcamento(row.id)
+
+  // Recalcular os totais
+  atualizarTotais()
+}
+
+const carregarItensDoOrcamento = async (id) => {
+  try {
+    const resp = await fetch(`http://localhost:3000/orcamentos/${id}/itens`)
+    const dados = await resp.json()
+
+    itensOrcamento.value = dados.map((item) => ({
+      controle: item.controle,
+      nome: item.nome,
+      quantidade: item.quantidade,
+      preco: item.preco,
+      total: item.quantidade * item.preco,
+    }))
+  } catch (err) {
+    console.error('Erro ao carregar itens:', err)
+  }
+}
+
+async function salvarEdicao() {
+  const dados = {
+    clienteId: clienteSelecionado.value,
+    validade: validade.value,
+    observacoes: observacao.value,
+    desconto: desconto.value,
+    acrescimo: acrescimo.value,
+    itens: itensOrcamento.value,
+  }
+
+  const res = await fetch(`${API_URL}/orcamentos/${idOrcamentoEdicao.value}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dados),
+  })
+
+  const resultado = await res.json()
+
+  if (resultado.success) {
+    showToast('Orçamento atualizado com sucesso!')
+    criarOrcamento.value = false
+    modoEdicao.value = false
+    carregarOrcamento() // atualizar tabela
+  } else {
+    showToast('Erro ao atualizar orçamento!')
   }
 }
 
