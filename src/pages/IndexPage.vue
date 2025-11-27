@@ -304,11 +304,23 @@
               </q-td>
             </template>
 
-            <template #body-cell-total="props">
-              <q-td class="text-right"> R$ {{ props.row.total.toFixed(2) }} </q-td>
+            <template #body-cell-acoes="props">
+              <q-td class="text-center">
+                <q-btn
+                  size="sm"
+                  color="negative"
+                  icon="delete"
+                  dense
+                  round
+                  @click="excluirItemOrç(props.row.controle)"
+                >
+                  <q-tooltip>Excluir</q-tooltip>
+                </q-btn>
+              </q-td>
             </template>
             <template #no-data />
           </q-table>
+
           <q-input
             filled
             v-model="observacao"
@@ -1483,6 +1495,7 @@ const colunasOrcamento = [
     style: 'width: 120px; text-align: right; font-weight: bold',
     headerStyle: 'text-align: right',
   },
+  { name: 'acoes', label: 'Ações', field: 'controle', align: 'center' },
 ]
 
 const desconto = ref(0)
@@ -1519,6 +1532,11 @@ function adicionarItem(item) {
   atualizarTotais()
   resultadoBusca.value = []
   buscaItem.value = ''
+}
+
+function excluirItemOrç(controle) {
+  itensOrcamento.value = itensOrcamento.value.filter((i) => i.controle !== controle)
+  atualizarTotais()
 }
 
 // Atualizar totais
