@@ -406,21 +406,25 @@ app.post('/orcamentos', (req, res) => {
 })
 
 app.get('/orcamentos', (req, res) => {
-  db.all(
-    `SELECT
-       o.*,
-       c.nome AS clienteNome
-     FROM orcamentos o
-     LEFT JOIN clientes c ON c.id = o.clienteId
-     ORDER BY o.id DESC`,
-    [],
-    (err, rows) => {
-      if (err) {
-        return res.status(500).json({ error: err.message })
-      }
-      res.json(rows)
-    },
-  )
+  const sql = `
+    SELECT
+      o.*,
+      c.nome AS clienteNome
+    FROM orcamentos o
+    LEFT JOIN clientes c ON c.id = o.clienteId
+    ORDER BY o.id DESC
+  `
+
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({
+        error: 'Erro ao buscar orçamentos',
+        details: err.message,
+      })
+    }
+
+    res.json(rows)
+  })
 })
 
 app.get('/orcamentos/:id', (req, res) => {
