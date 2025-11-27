@@ -159,6 +159,7 @@
             () => {
               ocultar()
               limparOrcamento()
+              trocartitulo()
               menuAtivo = 'criaorca'
               criarOrcamento = true
             }
@@ -196,7 +197,7 @@
         <!-- ===================== -->
         <div v-if="criarOrcamento" class="q-pa-md">
           <!-- TÍTULO -->
-          <div style="margin-bottom: 50px" class="text-h4 text-primary q-mb-md">Orçamentos</div>
+          <div style="margin-bottom: 50px" class="text-h4 text-primary q-mb-md">{{ titulo }}</div>
 
           <!-- SELEÇÃO DO CLIENTE -->
           <div style="margin-bottom: 20px" class="row q-col-gutter-md">
@@ -372,7 +373,7 @@
           <q-page padding>
             <q-card class="q-pa-md">
               <q-card-section>
-                <div class="text-h6">Cadastro de Clientes</div>
+                <div class="text-h4 text-blue-8 q-mb-lg">Cadastro de Clientes</div>
                 <q-form @submit.prevent="salvarCliente">
                   <div class="flex gap-2">
                     <div class="col">
@@ -486,6 +487,7 @@
             row-key="id"
             class="q-mt-md"
             dense
+            title-class="text-h4 text-primary q-pa-md"
             :pagination="{ page: 1, rowsPerPage: 14 }"
           >
             <template v-slot:body-cell-acoes="props">
@@ -511,12 +513,13 @@
         <!-- LISTAR CLIENTES -->
         <div v-if="listarClientes">
           <q-table
-            title="Clientes"
+            title="Listagem de Clientes"
             :rows="clientes"
             :columns="colunas"
             row-key="id"
             class="q-mt-md"
             dense
+            title-class="text-h4 text-primary q-pa-md"
             :pagination="{ page: 1, rowsPerPage: 14 }"
           >
             <template v-slot:body-cell-acoes="props">
@@ -669,12 +672,13 @@
         <!-- LISTAR ITENS -->
         <div v-if="listarItens">
           <q-table
-            title="Produtos"
+            title="Listagem de Produtos"
             :rows="itens"
             :columns="colunasi"
             row-key="controle"
             class="q-mt-md"
             dense
+            title-class="text-h4 text-primary q-pa-md"
             :pagination="{ page: 1, rowsPerPage: 14 }"
           >
             <template v-slot:body-cell-acoes="props">
@@ -754,6 +758,7 @@
             row-key="id"
             class="q-mt-md"
             dense
+            title-class="text-h4 text-primary q-pa-md"
             :pagination="{ page: 1, rowsPerPage: 14 }"
           >
             <template v-slot:body-cell-acoes="props">
@@ -782,6 +787,7 @@
                   row-key="cliente_id"
                   class="q-mt-md"
                   dense
+                  title-class="text-h4 text-primary q-pa-md"
                   :pagination="{ page: 1, rowsPerPage: 14 }"
                 >
                   <template v-slot:body-cell-acoes="props">
@@ -821,6 +827,7 @@
                   row-key="cliente_id"
                   class="q-mt-md"
                   dense
+                  title-class="text-h4 text-primary q-pa-md"
                   :pagination="{ page: 1, rowsPerPage: 12 }"
                 >
                   <template v-slot:body-cell-acoes="props">
@@ -908,7 +915,7 @@ const buscaItem = ref('')
 const observacao = ref(null)
 const validade = ref(null)
 const menuAtivo = ref(null)
-
+const titulo = ref(null)
 const atualizarListaFiltrada = (termo) => {
   if (!termo || termo.length < 3) {
     clientesFiltrados.value = [...clientes.value]
@@ -938,6 +945,10 @@ function ocultar() {
   resumoDividas.value = false
   criarOrcamento.value = false
   listarOrcamento.value = false
+}
+
+function trocartitulo() {
+  titulo.value = 'NOVO ORÇAMENTO'
 }
 
 const colunas = [
@@ -1439,7 +1450,7 @@ function abonarConta(cliente) {
 const criarOrcamento = ref(false)
 const clienteSelecionado = ref(null)
 const itensOrcamento = ref([])
-
+titulo.value = 'NOVO ORÇAMENTO'
 const colunasOrcamento = [
   {
     name: 'nome',
@@ -1745,7 +1756,7 @@ const idOrcamentoEdicao = ref(null)
 
 const editarOrcamento = async (row) => {
   console.log('DADOS ENVIADOS PARA EDITAR:', row)
-
+  titulo.value = 'ATUALIZAR ORÇAMENTO'
   criarOrcamento.value = true
   listarOrcamento.value = false
   idOrcamentoEdicao.value = row.id
