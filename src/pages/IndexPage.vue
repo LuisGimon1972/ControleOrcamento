@@ -546,7 +546,7 @@
           <q-page padding>
             <q-card class="q-pa-md">
               <q-card-section>
-                <div class="text-h6">Cadastro de Itens</div>
+                <div class="text-h4 text-blue-8 q-mb-lg">Cadastro de Itens</div>
                 <q-form @submit.prevent="salvarItem">
                   <div class="flex gap-2">
                     <div class="col">
@@ -779,7 +779,7 @@
           <q-page padding>
             <q-card class="q-pa-md">
               <q-card-section>
-                <div class="text-h6">Dívidas por Cliente</div>
+                <div class="text-h4 text-blue-8 q-mb-lg">Dívidas por Cliente</div>
                 <q-table
                   title="Resumo de Dívidas"
                   :rows="dividasPorCliente"
@@ -819,7 +819,7 @@
           <q-page padding>
             <q-card class="q-pa-md">
               <q-card-section>
-                <div class="text-h6">Resumo de crédidos por Cliente</div>
+                <div class="text-h4 text-blue-8 q-mb-lg">Resumo de crédidos por Cliente</div>
                 <q-table
                   title="Resumo de Créditos"
                   :rows="dividasPorCliente"
