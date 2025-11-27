@@ -1462,7 +1462,6 @@ function abonarConta(cliente) {
 //MODULO NOVO ORÇAMENTO
 const criarOrcamento = ref(false)
 const entrarOrcamento = ref(false)
-entrarOrcamento.value = false
 const clienteSelecionado = ref(null)
 const itensOrcamento = ref([])
 const acrescimoRef = ref(null)
