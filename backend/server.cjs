@@ -314,9 +314,6 @@ app.get('/itens/busca/buscar', (req, res) => {
 
 //ROTAS DE ORÇAMENTO
 
-// ===============================
-//   CRIAR ORÇAMENTO COMPLETO
-// ===============================
 app.post('/orcamentos', (req, res) => {
   const {
     clienteId,
@@ -329,9 +326,8 @@ app.post('/orcamentos', (req, res) => {
     observacoes,
   } = req.body
 
-  // -----------------------------
   // Gerar número sequencial ORC0001 Original Original
-  // -----------------------------
+
   db.get(`SELECT numero FROM orcamentos ORDER BY id DESC LIMIT 1`, (err, row) => {
     if (err) return res.status(500).json({ error: err.message })
 
@@ -343,9 +339,8 @@ app.post('/orcamentos', (req, res) => {
       novoNumero = 'ORC' + String(proximo).padStart(4, '0')
     }
 
-    // -----------------------------
     // Inserir Orçamento
-    // -----------------------------
+
     const sqlOrcamento = `
         INSERT INTO orcamentos
         (numero, clienteId, validade, observacoes, desconto, acrescimo, valorTotalItens, valorTotal)
