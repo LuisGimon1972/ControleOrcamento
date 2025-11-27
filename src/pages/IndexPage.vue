@@ -1461,6 +1461,8 @@ function abonarConta(cliente) {
 }
 //MODULO NOVO ORÇAMENTO
 const criarOrcamento = ref(false)
+const entrarOrcamento = ref(false)
+entrarOrcamento.value = false
 const clienteSelecionado = ref(null)
 const itensOrcamento = ref([])
 const acrescimoRef = ref(null)
@@ -1543,6 +1545,7 @@ function excluirItemOrç(controle) {
 }
 
 // Atualizar totais
+
 function atualizarTotais() {
   let subtotal = itensOrcamento.value.reduce((acc, i) => {
     i.total = i.quantidade * i.valorUnit
@@ -1550,14 +1553,15 @@ function atualizarTotais() {
   }, 0)
 
   const descontoMaximo = Math.max(0, subtotal - 0.01)
-
-  if (desconto.value > descontoMaximo) {
-    showToast('O desconto informado é maior que o permitido e foi reajustado!', 3000)
-    desconto.value = descontoMaximo
-    if (acrescimoRef.value) {
-      setTimeout(() => {
-        acrescimoRef.value.focus()
-      }, 50)
+  if (!entrarOrcamento.value) {
+    if (desconto.value > descontoMaximo) {
+      showToast('O desconto informado é maior que o permitido e foi reajustado!', 3000)
+      desconto.value = descontoMaximo
+      if (acrescimoRef.value) {
+        setTimeout(() => {
+          acrescimoRef.value.focus()
+        }, 50)
+      }
     }
   }
   let soma = subtotal - desconto.value + acrescimo.value
@@ -1774,6 +1778,7 @@ const idOrcamentoEdicao = ref(null)
 const editarOrcamento = async (row) => {
   console.log('DADOS ENVIADOS PARA EDITAR:', row)
   titulo.value = 'ATUALIZAR ORÇAMENTO' + '  -  ' + 'Nº:' + row.numero
+  entrarOrcamento.value = true //Antes de abrir
   criarOrcamento.value = true
   listarOrcamento.value = false
   idOrcamentoEdicao.value = row.id
@@ -1784,6 +1789,7 @@ const editarOrcamento = async (row) => {
   acrescimo.value = row.acrescimo || 0
   await carregarItensDoOrcamento(row.id)
   atualizarTotais()
+  entrarOrcamento.value = false //Após de abrir
 }
 
 async function carregarItensDoOrcamento(id) {
