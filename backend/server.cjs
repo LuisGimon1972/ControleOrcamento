@@ -446,38 +446,101 @@ app.get('/orcamentos/:id', (req, res) => {
 })
 
 app.put('/orcamentos/:id', (req, res) => {
-  const id = req.params.id
-  const { clienteId, validade, observacoes, desconto, acrescimo, valorTotalItens, valorTotal } =
-    req.body
+  const orcamentoId = req.params.id
 
-  db.run(
-    `UPDATE orcamentos
-     SET clienteId=?, validade=?, observacoes=?, desconto=?, acrescimo=?, valorTotalItens=?, valorTotal=?
-     WHERE id=?`,
-    [clienteId, validade, observacoes, desconto, acrescimo, valorTotalItens, valorTotal, id],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message })
+  const { clienteId, itens, desconto, acrescimo, validade, observacoes } = req.body
 
-      // 🔥 Agora retornamos o orçamento atualizado com JOIN
-      db.get(
-        `SELECT
-           o.*,
-           c.nome AS clienteNome
-         FROM orcamentos o
-         LEFT JOIN clientes c ON c.id = o.clienteId
-         WHERE o.id = ?`,
-        [id],
-        (err2, row) => {
-          if (err2) return res.status(500).json({ error: err2.message })
+  // -----------------------------------
+  // Recalcular totais
+  // -----------------------------------
+  let somaItens = 0
 
-          res.json({
-            success: true,
-            orcamento: row,
-          })
-        },
-      )
-    },
-  )
+  itens.forEach((item) => {
+    const unit = Number(item.precoUnit || item.valorUnit || 0)
+    const qt = Number(item.quantidade)
+    somaItens += qt * unit
+  })
+
+  const valorTotalFinal = somaItens - (Number(desconto) || 0) + (Number(acrescimo) || 0)
+
+  db.serialize(() => {
+    db.run('BEGIN TRANSACTION')
+
+    const sqlUpdate = `
+      UPDATE orcamentos
+      SET clienteId=?, validade=?, observacoes=?,
+          desconto=?, acrescimo=?, valorTotalItens=?, valorTotal=?
+      WHERE id=?
+    `
+
+    db.run(
+      sqlUpdate,
+      [
+        clienteId,
+        validade || null,
+        observacoes || null,
+        desconto || 0,
+        acrescimo || 0,
+        somaItens,
+        valorTotalFinal,
+        orcamentoId,
+      ],
+      function (err) {
+        if (err) {
+          db.run('ROLLBACK')
+          return res.status(500).json({ error: err.message })
+        }
+      },
+    )
+
+    // Apagar itens antigos
+    db.run(`DELETE FROM itensOrcamento WHERE orcamentoId = ?`, [orcamentoId], function (err) {
+      if (err) {
+        db.run('ROLLBACK')
+        return res.status(500).json({ error: err.message })
+      }
+
+      const sqlItem = `
+          INSERT INTO itensOrcamento
+          (orcamentoId, produtoId, descricao, quantidade, valorUnit, total, tipoItem)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `
+
+      const stmtItem = db.prepare(sqlItem)
+
+      itens.forEach((item) => {
+        const unit = Number(item.precoUnit || item.valorUnit || 0)
+        const qt = Number(item.quantidade)
+        const total = qt * unit
+
+        stmtItem.run([
+          orcamentoId,
+          item.controle || null,
+          item.nome || item.descricao || '',
+          qt,
+          unit,
+          total,
+          item.tipoItem || 'PRODUTO',
+        ])
+      })
+
+      stmtItem.finalize((err) => {
+        if (err) {
+          db.run('ROLLBACK')
+          return res.status(500).json({ error: err.message })
+        }
+
+        db.run('COMMIT')
+        return res.json({
+          sucesso: true,
+          mensagem: 'Orçamento atualizado com sucesso',
+          orcamentoId,
+          valorTotalFinal,
+          somaItens,
+        })
+      })
+    })
+  })
 })
 
 app.delete('/orcamentos/:id', (req, res) => {
