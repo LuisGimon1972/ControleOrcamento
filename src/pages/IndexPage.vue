@@ -28,7 +28,7 @@
           <q-item-section avatar>
             <q-icon name="person" />
           </q-item-section>
-          <q-item-section> Cadastro de Clientes </q-item-section>
+          <q-item-section> Cadastro de Cliente </q-item-section>
         </q-item>
 
         <q-item
@@ -48,6 +48,80 @@
           </q-item-section>
           <q-item-section>Listagem de Clientes</q-item-section>
         </q-item>
+        <q-item
+          clickable
+          :active="menuAtivo === 'cadastroitem'"
+          active-class="item-ativo"
+          @click="
+            () => {
+              ocultar()
+              menuAtivo = 'cadastroitem'
+              mostrarItens = true
+            }
+          "
+        >
+          <q-item-section avatar>
+            <q-icon name="inventory_2" />
+          </q-item-section>
+          <q-item-section> Cadastro de Item </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          :active="menuAtivo === 'listaitem'"
+          active-class="item-ativo"
+          @click="
+            () => {
+              ocultar()
+              menuAtivo = 'listaitem'
+              listarItens = true
+            }
+          "
+        >
+          <q-item-section avatar>
+            <q-icon name="format_list_bulleted" />
+          </q-item-section>
+          <q-item-section> Listagem de Itens </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          :active="menuAtivo === 'criaorca'"
+          active-class="item-ativo"
+          @click="
+            () => {
+              ocultar()
+              limparOrcamento()
+              trocartitulo()
+              menuAtivo = 'criaorca'
+              criarOrcamento = true
+            }
+          "
+        >
+          <q-item-section avatar>
+            <q-icon name="note_add" />
+          </q-item-section>
+          <q-item-section> Cadastro de Orçamento </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          :active="menuAtivo === 'listaorca'"
+          active-class="item-ativo"
+          @click="
+            () => {
+              ocultar()
+              menuAtivo = 'listaorca'
+              listarOrcamento = true
+            }
+          "
+        >
+          <q-item-section avatar>
+            <q-icon name="format_list_bulleted" />
+          </q-item-section>
+          <q-item-section> Listagem Orçamentos </q-item-section>
+        </q-item>
+
         <q-item
           clickable
           :active="menuAtivo === 'mostrarR'"
@@ -115,78 +189,6 @@
             <q-icon name="request_quote" />
           </q-item-section>
           <q-item-section> Quitação de créditos </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          :active="menuAtivo === 'mostraitem'"
-          active-class="item-ativo"
-          @click="
-            () => {
-              ocultar()
-              menuAtivo = 'mostraitem'
-              mostrarItens = true
-            }
-          "
-        >
-          <q-item-section avatar>
-            <q-icon name="inventory_2" />
-          </q-item-section>
-          <q-item-section> Cadastro de Itens </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          :active="menuAtivo === 'cadastroitem'"
-          active-class="item-ativo"
-          @click="
-            () => {
-              ocultar()
-              menuAtivo = 'cadastroitem'
-              listarItens = true
-            }
-          "
-        >
-          <q-item-section avatar>
-            <q-icon name="format_list_bulleted" />
-          </q-item-section>
-          <q-item-section> Listagem de Itens </q-item-section>
-        </q-item>
-
-        <q-item
-          clickable
-          :active="menuAtivo === 'criaorca'"
-          active-class="item-ativo"
-          @click="
-            () => {
-              ocultar()
-              limparOrcamento()
-              trocartitulo()
-              menuAtivo = 'criaorca'
-              criarOrcamento = true
-            }
-          "
-        >
-          <q-item-section avatar>
-            <q-icon name="note_add" />
-          </q-item-section>
-          <q-item-section> Criar Orçamento </q-item-section>
-        </q-item>
-
-        <q-item
-          clickable
-          :active="menuAtivo === 'listaorca'"
-          active-class="item-ativo"
-          @click="
-            () => {
-              ocultar()
-              menuAtivo = 'listaorca'
-              listarOrcamento = true
-            }
-          "
-        >
-          <q-item-section avatar>
-            <q-icon name="format_list_bulleted" />
-          </q-item-section>
-          <q-item-section> Listagem Orçamentos </q-item-section>
         </q-item>
       </div>
 
@@ -860,7 +862,6 @@
   <div id="toastv" class="toastv" style="display: none"></div>
 </template>
 <script setup>
-//Importaçoes
 import logo from 'src/assets/logo.png'
 import usuario from 'src/assets/usuario.png'
 import { ref, onMounted, watch } from 'vue'
@@ -878,7 +879,7 @@ const receber = ref({
 })
 const carregaraClientes = async () => {
   try {
-    const resp = await fetch('http://localhost:3000/clientes') // ajuste a URL conforme sua API
+    const resp = await fetch('http://localhost:3000/clientes')
     const data = await resp.json()
     clientes.value = data
   } catch (err) {
@@ -1563,7 +1564,7 @@ async function salvarOrcamento() {
     return
   }
 
-  // --- CALCULAR VALOR TOTAL FINAL ---
+  // --- Calcular valor votal final ---
   const valorTotalFinal = totalGeral.value + desconto.value - acrescimo.value
 
   const payload = {
@@ -1636,7 +1637,7 @@ watch(
   },
 )
 
-//LISTAGEM ORÇAMENTO
+// MÓDULO LISTAGEM ORÇAMENTO
 
 const listarOrcamento = ref(false)
 const orcamentos = ref([])
@@ -1644,10 +1645,7 @@ const orcamentos = ref([])
 const colunasOrcamentosg = [
   { name: 'id', label: 'ID', field: 'id', align: 'left' },
   { name: 'numero', label: 'Número', field: 'numero', align: 'left' },
-
-  // 🔥 AQUI ESTÁ A CORREÇÃO: agora usa clienteNome
   { name: 'cliente', label: 'Cliente', field: 'clienteNome', align: 'left' },
-
   {
     name: 'dataCriacao',
     label: 'Data',
@@ -1672,8 +1670,6 @@ const colunasOrcamentosg = [
     align: 'left',
     format: (val) => {
       if (!val) return ''
-
-      // Se vier no formato DD-MM-YYYY → converter para DD/MM/YYYY
       if (val.includes('-')) {
         const partes = val.split('-')
         if (partes[0].length === 2) {
@@ -1749,7 +1745,7 @@ async function excluirOrcamento(id) {
   }
 }
 
-// EDITAR ORÇAMENTO bom
+// MÓDULO EDITAR ORÇAMENTO
 
 const modoEdicao = ref(false)
 const idOrcamentoEdicao = ref(null)
@@ -1804,12 +1800,9 @@ async function salvarEdicao() {
   const resultado = await res.json()
 
   if (resultado.success) {
-    // showToastv('Orçamento atualizado com sucesso!', 2000)
     ocultar()
     listarOrcamento.value = true
-    //modoEdicao.value = false
-
-    carregarOrcamento() // atualizar tabela
+    carregarOrcamento()
   } else {
     showToast('Erro ao atualizar orçamento!')
   }
@@ -1881,7 +1874,6 @@ onMounted(async () => {
   position: fixed;
   z-index: 9999;
 
-  /* CENTRALIZAR NA TELA */
   top: 50%;
   left: 55%;
   transform: translate(-50%, -50%);
@@ -1907,7 +1899,6 @@ onMounted(async () => {
   position: fixed;
   z-index: 9999;
 
-  /* CENTRALIZAR NA TELA */
   top: 50%;
   left: 55%;
   transform: translate(-50%, -50%);
