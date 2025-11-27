@@ -696,8 +696,6 @@
                   color="negative"
                   icon="delete"
                   @click="excluirItem(props.row.controle)"
-                  dense
-                  :pagination="{ page: 1, rowsPerPage: 14 }"
                 />
               </q-td>
             </template>
