@@ -196,7 +196,7 @@
         <!-- ===================== -->
         <div v-if="criarOrcamento" class="q-pa-md">
           <!-- TÍTULO -->
-          <div style="margin-bottom: 50px" class="text-h4 text-primary q-mb-md">Orçamento</div>
+          <div style="margin-bottom: 50px" class="text-h4 text-primary q-mb-md">Orçamentos</div>
 
           <!-- SELEÇÃO DO CLIENTE -->
           <div style="margin-bottom: 20px" class="row q-col-gutter-md">
@@ -480,7 +480,7 @@
 
         <div v-if="listarOrcamento">
           <q-table
-            title="Orçamentos"
+            title="Listagem de Orçamentos"
             :rows="orcamentos"
             :columns="colunasOrcamentosg"
             row-key="id"
@@ -1571,13 +1571,13 @@ async function salvarOrcamento() {
     if (idOrcamentoEdicao.value) {
       console.log('Atualizando orçamento ID:', idOrcamentoEdicao.value)
       res = await axios.put(`/orcamentos/${idOrcamentoEdicao.value}`, payload)
-      showToastv('Orçamento atualizado com sucesso!', 3000)
+      showToastv('Orçamento atualizado com sucesso!', 1000)
       ocultar()
       carregarOrcamento()
       listarOrcamento.value = true
     } else {
       res = await axios.post('/orcamentos', payload)
-      showToastv('Orçamento criado com sucesso!', 3000)
+      showToastv('Orçamento criado com sucesso!', 1000)
     }
 
     console.log('Retorno:', res.data)
@@ -1637,12 +1637,74 @@ const colunasOrcamentosg = [
   // 🔥 AQUI ESTÁ A CORREÇÃO: agora usa clienteNome
   { name: 'cliente', label: 'Cliente', field: 'clienteNome', align: 'left' },
 
-  { name: 'dataCriacao', label: 'Data', field: 'dataCriacao', align: 'left' },
-  { name: 'validade', label: 'Validade', field: 'validade', align: 'left' },
-  { name: 'valorTotalItens', label: 'Itens', field: 'valorTotalItens', align: 'right' },
-  { name: 'desconto', label: 'Desc.', field: 'desconto', align: 'right' },
-  { name: 'acrescimo', label: 'Acrésc.', field: 'acrescimo', align: 'right' },
-  { name: 'valorTotal', label: 'Total', field: 'valorTotal', align: 'right' },
+  {
+    name: 'dataCriacao',
+    label: 'Data',
+    field: 'dataCriacao',
+    align: 'left',
+    format: (val) => {
+      if (!val) return ''
+      const d = new Date(val)
+      return d.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    },
+  },
+  {
+    name: 'validade',
+    label: 'Validade',
+    field: 'validade',
+    align: 'left',
+    format: (val) => {
+      if (!val) return ''
+
+      // Se vier no formato DD-MM-YYYY → converter para DD/MM/YYYY
+      if (val.includes('-')) {
+        const partes = val.split('-')
+        if (partes[0].length === 2) {
+          return `${partes[0]}/${partes[1]}/${partes[2]}`
+        }
+        if (partes[0].length === 4) {
+          return `${partes[2]}/${partes[1]}/${partes[0]}`
+        }
+      }
+
+      return val
+    },
+  },
+  {
+    name: 'valorTotalItens',
+    label: 'Itens',
+    field: 'valorTotalItens',
+    align: 'right',
+    format: (val) => Number(val).toFixed(2),
+  },
+  {
+    name: 'desconto',
+    label: 'Desc.',
+    field: 'desconto',
+    align: 'right',
+    format: (val) => Number(val).toFixed(2),
+  },
+  {
+    name: 'acrescimo',
+    label: 'Acrésc.',
+    field: 'acrescimo',
+    align: 'right',
+    format: (val) => Number(val).toFixed(2),
+  },
+  {
+    name: 'valorTotal',
+    label: 'Total',
+    field: 'valorTotal',
+    align: 'right',
+    format: (val) => Number(val).toFixed(2),
+  },
+
   { name: 'status', label: 'Status', field: 'status', align: 'left' },
   { name: 'acoes', label: 'Ações', field: 'acoes', align: 'center' },
 ]
