@@ -342,6 +342,7 @@
                 type="number"
                 label="Desconto (R$)"
                 class="label-grande"
+                @blur="atualizarTotais"
               />
             </div>
 
@@ -352,6 +353,7 @@
                 type="number"
                 label="Acréscimo (R$)"
                 class="label-grande"
+                ref="acrescimoRef"
               />
             </div>
           </div>
@@ -365,7 +367,7 @@
 
           <!-- BOTÃO SALVAR -->
           <q-btn
-            :label="modoEdicao ? 'Salvar Alterações' : 'Salvar Orçamento'"
+            :label="modoEdicao ? 'Salvar Alterações' : 'Salvar'"
             color="primary"
             icon="save"
             size="md"
@@ -1461,6 +1463,7 @@ function abonarConta(cliente) {
 const criarOrcamento = ref(false)
 const clienteSelecionado = ref(null)
 const itensOrcamento = ref([])
+const acrescimoRef = ref(null)
 titulo.value = 'NOVO ORÇAMENTO'
 const colunasOrcamento = [
   {
@@ -1541,13 +1544,24 @@ function excluirItemOrç(controle) {
 
 // Atualizar totais
 function atualizarTotais() {
-  let soma = itensOrcamento.value.reduce((acc, i) => {
+  let subtotal = itensOrcamento.value.reduce((acc, i) => {
     i.total = i.quantidade * i.valorUnit
     return acc + i.total
   }, 0)
 
-  soma = soma - desconto.value + acrescimo.value
-  totalGeral.value = soma
+  const descontoMaximo = Math.max(0, subtotal - 0.01)
+
+  if (desconto.value > descontoMaximo) {
+    showToast('O desconto informado é maior que o permitido e foi reajustado!', 3000)
+    desconto.value = descontoMaximo
+    if (acrescimoRef.value) {
+      setTimeout(() => {
+        acrescimoRef.value.focus()
+      }, 50)
+    }
+  }
+  let soma = subtotal - desconto.value + acrescimo.value
+  totalGeral.value = Math.max(0, soma)
 }
 
 watch(desconto, () => {
