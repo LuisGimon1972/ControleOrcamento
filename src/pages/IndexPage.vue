@@ -1623,12 +1623,6 @@ watch(
 
     if (dataEscolhida < hoje) {
       showToast(`A validade não pode ser menor que a data atual!`, 3000)
-
-      $q.notify({
-        type: 'negative',
-        message: 'A validade não pode ser menor que a data atual!',
-      })
-
       validade.value = null
     }
   },
@@ -1803,6 +1797,10 @@ async function salvarEdicao() {
   } else {
     showToast('Erro ao atualizar orçamento!')
   }
+}
+
+function abrirCalendario() {
+  console.log('Abrindo calendário...')
 }
 
 function showToast(message, tempo = 3000) {
