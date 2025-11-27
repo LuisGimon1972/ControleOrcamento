@@ -1543,7 +1543,6 @@ watch(acrescimo, () => {
 })
 
 async function salvarOrcamento() {
-  // --- VALIDAÇÕES ---
   if (!clienteSelecionado.value) {
     showToast('Selecione um cliente!', 3000)
     return
@@ -1591,9 +1590,7 @@ async function salvarOrcamento() {
       res = await axios.post('/orcamentos', payload)
       showToastv('Orçamento criado com sucesso!', 1000)
     }
-
     console.log('Retorno:', res.data)
-
     limparOrcamento()
     carregarOrcamento()
   } catch (error) {
@@ -1752,7 +1749,7 @@ const idOrcamentoEdicao = ref(null)
 
 const editarOrcamento = async (row) => {
   console.log('DADOS ENVIADOS PARA EDITAR:', row)
-  titulo.value = 'ATUALIZAR ORÇAMENTO'
+  titulo.value = 'ATUALIZAR ORÇAMENTO' + '  -  ' + 'Nº:' + row.numero
   criarOrcamento.value = true
   listarOrcamento.value = false
   idOrcamentoEdicao.value = row.id
