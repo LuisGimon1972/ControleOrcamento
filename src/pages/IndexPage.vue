@@ -1689,7 +1689,7 @@ const editarOrcamento = async (row) => {
   idOrcamentoEdicao.value = row.id
   clienteSelecionado.value = row.clienteId
   validade.value = row.validade
-  observacao.value = row.observacao || ''
+  observacao.value = row.observacoes || ''
   desconto.value = row.desconto || 0
   acrescimo.value = row.acrescimo || 0
   await carregarItensDoOrcamento(row.id)
