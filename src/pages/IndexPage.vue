@@ -707,7 +707,7 @@
           <q-page padding>
             <q-card class="q-pa-md">
               <q-card-section>
-                <div class="text-h6">Lançamento de Crédito Cliente</div>
+                <div class="text-h4 text-blue-8 q-mb-lg">Lançamento de Crédito Cliente</div>
                 <q-form @submit.prevent="salvarReceber">
                   <q-select
                     ref="clienteInput"
