@@ -1027,6 +1027,7 @@ async function carregarClientes() {
 }
 
 async function salvarCliente() {
+  //debugger
   if (!cliente.value.nome || !cliente.value.cpf || !cliente.value.limite) {
     showToast('Preencha todos os campos obrigatórios!', 1000)
     if (!cliente.value.cpf) return cpfInput.value?.focus()
@@ -1557,6 +1558,7 @@ function excluirItemOrç(controle) {
 // Atualizar totais
 
 function atualizarTotais() {
+  //debugger
   let subtotal = itensOrcamento.value.reduce((acc, i) => {
     i.total = i.quantidade * i.valorUnit
     return acc + i.total
@@ -1756,28 +1758,41 @@ async function carregarOrcamento() {
   orcamentos.value = await res.json()
 }
 
-async function excluirOrcamento(id) {
-  if (!confirm('Deseja realmente excluir este orçamento?')) {
-    return
-  }
+function excluirOrcamento(id) {
+  Notify.create({
+    message: 'Tem certeza que deseja excluir o Orçamento?',
+    caption: 'Essa ação não poderá ser desfeita.',
+    color: 'blue-9',
+    icon: 'warning',
+    position: 'center',
 
-  try {
-    const res = await fetch(`${API_URL}/orcamentos/${id}`, {
-      method: 'DELETE',
-    })
+    actions: [
+      {
+        label: 'Cancelar',
+        color: 'white',
+      },
+      {
+        label: 'Excluir',
+        color: 'negative',
+        handler: async () => {
+          try {
+            await fetch(`${API_URL}/orcamentos/${id}`, {
+              method: 'DELETE',
+            })
+            showToastv(`Orçamento excluído com sucesso!`, 1500)
+            carregarOrcamento()
+          } catch (err) {
+            console.error('Erro ao excluir orçamento:', err)
 
-    const data = await res.json().catch(() => ({}))
-
-    if (data.success) {
-      await carregarOrcamento()
-      showToastv('Orçamento excluído com sucesso!', 1500)
-    } else {
-      showToast('Erro ao excluir orçamento!')
-    }
-  } catch (error) {
-    console.error('Erro ao excluir orçamento:', error)
-    showToast('Erro ao excluir orçamento!', 1500)
-  }
+            Notify.create({
+              type: 'negative',
+              message: 'Erro ao excluir orçamento. Verifique sua conexão.',
+            })
+          }
+        },
+      },
+    ],
+  })
 }
 
 // MÓDULO EDITAR ORÇAMENTO
@@ -1786,6 +1801,7 @@ const modoEdicao = ref(false)
 const idOrcamentoEdicao = ref(null)
 
 const editarOrcamento = async (row) => {
+  //debugger
   console.log('DADOS ENVIADOS PARA EDITAR:', row)
   titulo.value = 'ATUALIZAR ORÇAMENTO' + '  -  ' + 'Nº:' + row.numero
   entrarOrcamento.value = true //Antes de abrir
