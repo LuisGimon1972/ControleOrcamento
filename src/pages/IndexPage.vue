@@ -1173,8 +1173,33 @@ async function salvarItem() {
 }
 
 async function excluirItem(controle) {
-  await fetch(`${API_URL}/itens/${controle}`, { method: 'DELETE' })
-  carregarItens()
+  Dialog.create({
+    title: 'Excluir Produto',
+    message:
+      'Tem certeza que deseja excluir esse produto? Essa ação <b>não poderá ser desfeita</b>.',
+    html: true,
+    icon: 'warning',
+    ok: {
+      label: 'Sim, excluir',
+      color: 'negative',
+      unelevated: true,
+    },
+    cancel: {
+      label: 'Cancelar',
+      flat: true,
+      color: 'grey-8',
+    },
+    persistent: true,
+  }).onOk(async () => {
+    try {
+      await fetch(`${API_URL}/itens/${controle}`, { method: 'DELETE' })
+      showToastv('Produto excluido com sucesso!', 1000)
+      carregarItens()
+    } catch (err) {
+      console.error('Erro ao excluir cliente:', err)
+      Notify.create({ type: 'negative', message: 'Erro ao excluir item. Verifique a conexão.' })
+    }
+  })
 }
 
 function editarItem(i) {
@@ -1760,9 +1785,9 @@ async function carregarOrcamento() {
 
 function excluirOrcamento(id) {
   Notify.create({
-    message: 'Tem certeza que deseja excluir o Orçamento?',
+    message: 'Tem certeza que deseja excluir esse Orçamento?',
     caption: 'Essa ação não poderá ser desfeita.',
-    color: 'blue-9',
+    color: 'blue-10',
     icon: 'warning',
     position: 'center',
 
@@ -1773,7 +1798,7 @@ function excluirOrcamento(id) {
       },
       {
         label: 'Excluir',
-        color: 'negative',
+        color: 'red-6',
         handler: async () => {
           try {
             await fetch(`${API_URL}/orcamentos/${id}`, {
