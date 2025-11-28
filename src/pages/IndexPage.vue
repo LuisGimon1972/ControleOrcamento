@@ -1048,18 +1048,23 @@ async function salvarCliente() {
     })
     const data = await res.json()
     cliente.value.id = data.id
+    showToastv('Cliente salvo com sucesso!', 1000)
+    limparFormulario()
+    carregarClientes()
+    carregarDividasPorCliente()
   } else {
     await fetch(`${API_URL}/clientes/${cliente.value.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(cliente.value),
     })
+    showToastv('Cliente atualizado com sucesso!', 1000)
+    limparFormulario()
+    carregarClientes()
+    carregarDividasPorCliente()
+    ocultar()
+    listarClientes.value = true
   }
-
-  showToastv('Cliente salvo com sucesso!', 1000)
-  limparFormulario()
-  carregarClientes()
-  carregarDividasPorCliente()
 }
 
 async function excluirCliente(id) {
