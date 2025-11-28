@@ -1149,16 +1149,21 @@ async function salvarItem() {
     })
     const data = await res.json()
     item.value.controle = data.controle
+    showToastv('Produto salvo com sucesso!', 1000)
+    limparFormularioI()
+    carregarItens()
   } else {
     await fetch(`${API_URL}/itens/${item.value.controle}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(item.value),
     })
+    showToastv('Produto atualizado com sucesso!', 1000)
+    limparFormularioI()
+    carregarItens()
+    ocultar()
+    listarItens.value = true
   }
-  showToastv('Produto salvo com sucesso!', 1000)
-  limparFormularioI()
-  carregarItens()
 }
 
 async function excluirItem(controle) {
@@ -1177,10 +1182,11 @@ function limparFormularioI() {
   item.value.descricao = ''
   item.value.grupo = ''
   item.value.marca = ''
-  item.value.quantidade = ''
-  item.value.precocusto = ''
-  item.value.precovenda = ''
-  item.value.revenda = ''
+  item.value.quantidade = 0
+  item.value.precocusto = 0
+  item.value.perlucro = 0
+  item.value.precovenda = 0
+  item.value.revenda = 0
   codInput.value.focus()
 }
 
@@ -1555,7 +1561,7 @@ function atualizarTotais() {
   if (!entrarOrcamento.value) {
     if (desconto.value > descontoMaximo) {
       showToast('O desconto informado é maior que o permitido e foi reajustado!', 3000)
-      desconto.value = descontoMaximo
+      desconto.value = descontoMaximo.toFixed(2)
       if (acrescimoRef.value) {
         setTimeout(() => {
           acrescimoRef.value.focus()
@@ -1563,7 +1569,7 @@ function atualizarTotais() {
       }
     }
   }
-  let soma = subtotal - desconto.value + acrescimo.value
+  let soma = subtotal - desconto.value + Number(acrescimo.value)
   totalGeral.value = Math.max(0, soma)
 }
 
@@ -1784,8 +1790,8 @@ const editarOrcamento = async (row) => {
   clienteSelecionado.value = row.clienteId
   validade.value = row.validade
   observacao.value = row.observacoes || ''
-  desconto.value = row.desconto || 0
-  acrescimo.value = row.acrescimo || 0
+  desconto.value = row.desconto.toFixed(2) || 0
+  acrescimo.value = row.acrescimo.toFixed(2) || 0
   await carregarItensDoOrcamento(row.id)
   atualizarTotais()
   entrarOrcamento.value = false //Após de abrir
@@ -1811,7 +1817,7 @@ async function salvarEdicao() {
     validade: validade.value,
     observacoes: observacao.value,
     desconto: desconto.value,
-    acrescimo: acrescimo.value,
+    acrescimo: acrescimo.value.toFixed(2),
     itens: itensOrcamento.value,
   }
 
