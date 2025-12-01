@@ -93,6 +93,8 @@
               ocultar()
               limparOrcamento()
               trocartitulo()
+              entrarOrcamento = false 
+              desabilitarTudo = false
               menuAtivo = 'criaorca'
               criarOrcamento = true
             }
@@ -111,6 +113,7 @@
           @click="
             () => {
               ocultar()
+              entrarOrcamento = true
               menuAtivo = 'listaorca'
               listarOrcamento = true
             }
@@ -197,7 +200,11 @@
         <!-- ===================== -->
         <!--     CRIAR ORÇAMENTO   -->
         <!-- ===================== -->
-        <div v-if="criarOrcamento" class="q-pa-md">
+        <div
+          v-if="criarOrcamento"
+          class="q-pa-md"
+          :class="{ 'disabled-container': desabilitarTudo }"
+        >
           <!-- TÍTULO -->
           <div style="margin-bottom: 50px" class="text-h4 text-primary q-mb-md">{{ titulo }}</div>
 
@@ -508,12 +515,18 @@
           >
             <template v-slot:body-cell-acoes="props">
               <q-td align="center">
-                <q-btn size="sm" color="warning" icon="edit" @click="editarOrcamento(props.row)" />
+                <q-btn size="sm" color="warning" icon="edit" @click="entrarOrcamento = true, editarOrcamento(props.row)" />
                 <q-btn
                   size="sm"
                   color="negative"
                   icon="delete"
                   @click="excluirOrcamento(props.row.id)"
+                />
+                <q-btn
+                  size="sm"
+                  color="blue"
+                  icon="visibility"
+                  @click="entrarOrcamento = true, verOrcamento(props.row)"
                 />
                 <q-btn
                   size="sm"
@@ -958,6 +971,7 @@ function ocultar() {
   resumoDividas.value = false
   criarOrcamento.value = false
   listarOrcamento.value = false
+  //desabilitarTudo.value = false
 }
 
 function trocartitulo() {
@@ -1131,6 +1145,7 @@ async function carregarItens() {
 }
 
 async function salvarItem() {
+  // VALIDAÇÃO DE CAMPOS OBRIGATÓRIOS
   if (
     !item.value.nome ||
     !item.value.codbarras ||
@@ -1147,23 +1162,49 @@ async function salvarItem() {
     return
   }
 
+  // 🔎 **VERIFICAR SE O CODIGO DE BARRAS JÁ EXISTE**
+  const resCheck = await fetch(`${API_URL}/itens/buscar-codigo/${item.value.codbarras}`)
+  const itemExistente = await resCheck.json()
+
+  // Se existir e for um cadastro novo
+  if (!item.value.controle && itemExistente) {
+    showToast('Código de barras já cadastrado!', 1500)
+    return codInput.value?.focus()
+  }
+
+  // Se existir e for atualização, não permitir duplicidade com outro item
+  if (item.value.controle && itemExistente && itemExistente.controle !== item.value.controle) {
+    showToast('Código de barras já está sendo usado em outro item!', 1500)
+    return codInput.value?.focus()
+  }
+
+  // ==============================
+  //        SALVAR / EDITAR
+  // ==============================
+
   if (!item.value.controle) {
+    // CADASTRAR
     const res = await fetch(`${API_URL}/itens`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(item.value),
     })
+
     const data = await res.json()
     item.value.controle = data.controle
+
     showToastv('Produto salvo com sucesso!', 1000)
     limparFormularioI()
     carregarItens()
+
   } else {
+    // EDITAR
     await fetch(`${API_URL}/itens/${item.value.controle}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(item.value),
     })
+
     showToastv('Produto atualizado com sucesso!', 1000)
     limparFormularioI()
     carregarItens()
@@ -1171,6 +1212,7 @@ async function salvarItem() {
     listarItens.value = true
   }
 }
+
 
 async function excluirItem(controle) {
   Dialog.create({
@@ -1583,14 +1625,14 @@ function excluirItemOrç(controle) {
 // Atualizar totais
 
 function atualizarTotais() {
-  //debugger
+  debugger
   let subtotal = itensOrcamento.value.reduce((acc, i) => {
     i.total = i.quantidade * i.valorUnit
     return acc + i.total
   }, 0)
 
   const descontoMaximo = Math.max(0, subtotal - 0.01)
-  if (!entrarOrcamento.value) {
+  if (entrarOrcamento.value==false) {
     if (desconto.value > descontoMaximo) {
       showToast('O desconto informado é maior que o permitido e foi reajustado!', 3000)
       desconto.value = descontoMaximo.toFixed(2)
@@ -1690,12 +1732,11 @@ watch(
     const dataFormatada = `${ano}-${mes}-${dia}`
     const hoje = new Date()
     hoje.setHours(0, 0, 0, 0)
-    const dataEscolhida = new Date(dataFormatada + 'T00:00:00')
-
-    if (dataEscolhida < hoje) {
+    const dataEscolhida = new Date(dataFormatada + 'T00:00:00')    
+    if (dataEscolhida < hoje && entrarOrcamento.value== false ) {
       showToast(`A validade não pode ser menor que a data atual!`, 3000)
-      validade.value = null
-    }
+      validade.value = null      
+    }    
   },
 )
 
@@ -1829,7 +1870,7 @@ const editarOrcamento = async (row) => {
   //debugger
   console.log('DADOS ENVIADOS PARA EDITAR:', row)
   titulo.value = 'ATUALIZAR ORÇAMENTO' + '  -  ' + 'Nº:' + row.numero
-  entrarOrcamento.value = true //Antes de abrir
+  entrarOrcamento.value = true 
   criarOrcamento.value = true
   listarOrcamento.value = false
   idOrcamentoEdicao.value = row.id
@@ -1840,7 +1881,26 @@ const editarOrcamento = async (row) => {
   acrescimo.value = row.acrescimo.toFixed(2) || 0
   await carregarItensDoOrcamento(row.id)
   atualizarTotais()
-  entrarOrcamento.value = false //Após de abrir
+  entrarOrcamento.value = false 
+  desabilitarTudo.value = false  
+}
+
+const verOrcamento = async (row) => {  
+  console.log('DADOS ENVIADOS PARA EDITAR:', row)
+  titulo.value = 'VISUALIZAR ORÇAMENTO' + '  -  ' + 'Nº:' + row.numero
+  entrarOrcamento.value = true
+  criarOrcamento.value = true
+  listarOrcamento.value = false
+  idOrcamentoEdicao.value = row.id
+  clienteSelecionado.value = row.clienteId
+  validade.value = row.validade
+  observacao.value = row.observacoes || ''
+  desconto.value = row.desconto.toFixed(2) || 0
+  acrescimo.value = row.acrescimo.toFixed(2) || 0
+  await carregarItensDoOrcamento(row.id)
+  atualizarTotais()  
+  desabilitarTudo.value = true
+  entrarOrcamento.value = false  
 }
 
 async function carregarItensDoOrcamento(id) {
@@ -1889,6 +1949,11 @@ async function salvarEdicao() {
 function abrirCalendario() {
   console.log('Abrindo calendário...')
 }
+
+// VER ORÇAMENTO
+const desabilitarTudo = ref(false)
+//desabilitarTudo.value = false //Habilita
+//desabilitarTudo.value = true //Deshabila
 
 function showToast(message, tempo = 3000) {
   const toast = document.getElementById('toast')

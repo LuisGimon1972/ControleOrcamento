@@ -286,6 +286,20 @@ app.delete('/itens/:controle', (req, res) => {
   })
 })
 
+app.get('/itens/buscar-codigo/:codigo', (req, res) => {
+  const { codigo } = req.params
+
+  db.get(
+    'SELECT * FROM itens WHERE codbarras = ?',
+    [codigo],
+    (err, row) => {
+      if (err) return res.status(500).json({ error: err.message })
+      res.json(row || null)
+    }
+  )
+})
+
+
 // ===============================
 // ROTA: Buscar itens por nome ou código de barras
 // ===============================
