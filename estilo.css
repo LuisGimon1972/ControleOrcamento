@@ -179,3 +179,53 @@ body {
   pointer-events: none;
   opacity: 0.8;
 }
+
+.toast {
+  display: block;
+  visibility: visible;
+  min-width: 250px;
+  background-color: blue;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 16px;
+  position: fixed;
+  z-index: 9999;
+
+  top: 50%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+
+  font-size: 17px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+.toastv {
+  display: block;
+  visibility: visible;
+  min-width: 250px;
+  background-color: rgb(16, 201, 62);
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+  padding: 16px;
+  position: fixed;
+  z-index: 9999;
+
+  top: 50%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.toastv.show {
+  opacity: 1;
+}
