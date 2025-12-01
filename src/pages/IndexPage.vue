@@ -211,7 +211,7 @@
           <!-- SELEÇÃO DO CLIENTE -->
           <div style="margin-bottom: 20px" class="row q-col-gutter-md">
             <!-- SELECT DO CLIENTE -->
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-md-6">
               <q-select
                 filled
                 v-model="clienteSelecionado"
@@ -224,8 +224,13 @@
               />
             </div>
 
+            <!-- CPF DO CLIENTE -->
+            <div class="col-12 col-md-3">
+              <q-input filled v-model="cpfCliente" label="CPF" readonly />
+            </div>
+
             <!-- VALIDADE -->
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
               <q-input
                 filled
                 v-model="validade"
@@ -1551,6 +1556,7 @@ function abonarConta(cliente) {
 const criarOrcamento = ref(false)
 const entrarOrcamento = ref(false)
 const clienteSelecionado = ref(null)
+const cpfCliente = ref('')
 const itensOrcamento = ref([])
 const acrescimoRef = ref(null)
 titulo.value = 'NOVO ORÇAMENTO'
@@ -1594,6 +1600,19 @@ const colunasOrcamento = [
 const desconto = ref(0)
 const acrescimo = ref(0)
 const totalGeral = ref(0)
+
+watch(
+  () => clienteSelecionado.value,
+  (novoId) => {
+    if (!novoId) {
+      cpfCliente.value = ''
+      return
+    }
+
+    const cliente = clientes.value.find((c) => c.id === novoId)
+    cpfCliente.value = cliente?.cpf || ''
+  },
+)
 
 const buscarItem = async () => {
   try {
