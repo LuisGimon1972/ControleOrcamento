@@ -991,7 +991,13 @@ const colunas = [
   { name: 'email', label: 'Email', field: 'email', align: 'left' },
   { name: 'telefone', label: 'Telefone', field: 'telefone', align: 'left' },
   { name: 'celular', label: 'Celular', field: 'celular', align: 'left' },
-  { name: 'limite', label: 'Limite de Crédito', field: 'limite', align: 'left' },
+  {
+    name: 'limite',
+    label: 'Limite de Crédito',
+    field: 'limite',
+    align: 'right',
+    format: (val) => Number(val).toFixed(2),
+  },
   { name: 'acoes', label: 'Ações', field: 'acoes', align: 'center' },
 ]
 
