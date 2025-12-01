@@ -174,3 +174,8 @@ body {
 .item-ativo .q-icon {
   color: white !important;
 }
+
+.disabled-container {
+  pointer-events: none;
+  opacity: 0.8;
+}
