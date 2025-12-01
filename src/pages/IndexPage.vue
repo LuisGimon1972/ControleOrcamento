@@ -1377,7 +1377,7 @@ async function salvarReceber() {
       return
     }
 
-    showToastv('✅ Conta salva com sucesso!', 2000)
+    showToastv('✅ Lançamento feito com sucesso!', 2000)
     limparFormularioReceber()
     await carregarDividasPorCliente()
     await carregarReceber()
@@ -1681,6 +1681,10 @@ async function salvarOrcamento() {
     return
   }
 
+  if (!validarValidade(validade.value, entrarOrcamento.value)) {
+    return
+  }
+
   if (!totalGeral.value || totalGeral.value <= 0) {
     showToast('Total do orçamento não pode ser zero!', 3000)
     return
@@ -1749,6 +1753,26 @@ watch(
     }
   },
 )
+
+function validarValidade(val, entrarOrcamento) {
+  if (!val) return false
+
+  // Quebra data do formato DD-MM-YYYY
+  const [dia, mes, ano] = val.split('-')
+  const dataFormatada = `${ano}-${mes}-${dia}`
+
+  const hoje = new Date()
+  hoje.setHours(0, 0, 0, 0)
+
+  const dataEscolhida = new Date(dataFormatada + 'T00:00:00')
+
+  if (dataEscolhida < hoje && !entrarOrcamento) {
+    showToast('A validade não pode ser menor que a data atual!', 3000)
+    return false
+  }
+
+  return true
+}
 
 // MÓDULO LISTAGEM ORÇAMENTO
 
