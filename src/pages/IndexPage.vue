@@ -93,7 +93,7 @@
               ocultar()
               limparOrcamento()
               trocartitulo()
-              entrarOrcamento = false 
+              entrarOrcamento = false
               desabilitarTudo = false
               menuAtivo = 'criaorca'
               criarOrcamento = true
@@ -515,7 +515,12 @@
           >
             <template v-slot:body-cell-acoes="props">
               <q-td align="center">
-                <q-btn size="sm" color="warning" icon="edit" @click="entrarOrcamento = true, editarOrcamento(props.row)" />
+                <q-btn
+                  size="sm"
+                  color="warning"
+                  icon="edit"
+                  @click="((entrarOrcamento = true), editarOrcamento(props.row))"
+                />
                 <q-btn
                   size="sm"
                   color="negative"
@@ -526,7 +531,7 @@
                   size="sm"
                   color="blue"
                   icon="visibility"
-                  @click="entrarOrcamento = true, verOrcamento(props.row)"
+                  @click="((entrarOrcamento = true), verOrcamento(props.row))"
                 />
                 <q-btn
                   size="sm"
@@ -1196,7 +1201,6 @@ async function salvarItem() {
     showToastv('Produto salvo com sucesso!', 1000)
     limparFormularioI()
     carregarItens()
-
   } else {
     // EDITAR
     await fetch(`${API_URL}/itens/${item.value.controle}`, {
@@ -1212,7 +1216,6 @@ async function salvarItem() {
     listarItens.value = true
   }
 }
-
 
 async function excluirItem(controle) {
   Dialog.create({
@@ -1577,6 +1580,7 @@ const colunasOrcamento = [
     align: 'right',
     style: 'width: 120px; text-align: right; font-weight: bold',
     headerStyle: 'text-align: right',
+    format: (val) => Number(val).toFixed(2),
   },
   { name: 'acoes', label: 'Ações', field: 'controle', align: 'center' },
 ]
@@ -1632,7 +1636,7 @@ function atualizarTotais() {
   }, 0)
 
   const descontoMaximo = Math.max(0, subtotal - 0.01)
-  if (entrarOrcamento.value==false) {
+  if (entrarOrcamento.value == false) {
     if (desconto.value > descontoMaximo) {
       showToast('O desconto informado é maior que o permitido e foi reajustado!', 3000)
       desconto.value = descontoMaximo.toFixed(2)
@@ -1732,11 +1736,11 @@ watch(
     const dataFormatada = `${ano}-${mes}-${dia}`
     const hoje = new Date()
     hoje.setHours(0, 0, 0, 0)
-    const dataEscolhida = new Date(dataFormatada + 'T00:00:00')    
-    if (dataEscolhida < hoje && entrarOrcamento.value== false ) {
+    const dataEscolhida = new Date(dataFormatada + 'T00:00:00')
+    if (dataEscolhida < hoje && entrarOrcamento.value == false) {
       showToast(`A validade não pode ser menor que a data atual!`, 3000)
-      validade.value = null      
-    }    
+      validade.value = null
+    }
   },
 )
 
@@ -1870,7 +1874,7 @@ const editarOrcamento = async (row) => {
   //debugger
   console.log('DADOS ENVIADOS PARA EDITAR:', row)
   titulo.value = 'ATUALIZAR ORÇAMENTO' + '  -  ' + 'Nº:' + row.numero
-  entrarOrcamento.value = true 
+  entrarOrcamento.value = true
   criarOrcamento.value = true
   listarOrcamento.value = false
   idOrcamentoEdicao.value = row.id
@@ -1881,11 +1885,11 @@ const editarOrcamento = async (row) => {
   acrescimo.value = row.acrescimo.toFixed(2) || 0
   await carregarItensDoOrcamento(row.id)
   atualizarTotais()
-  entrarOrcamento.value = false 
-  desabilitarTudo.value = false  
+  entrarOrcamento.value = false
+  desabilitarTudo.value = false
 }
 
-const verOrcamento = async (row) => {  
+const verOrcamento = async (row) => {
   console.log('DADOS ENVIADOS PARA EDITAR:', row)
   titulo.value = 'VISUALIZAR ORÇAMENTO' + '  -  ' + 'Nº:' + row.numero
   entrarOrcamento.value = true
@@ -1898,9 +1902,9 @@ const verOrcamento = async (row) => {
   desconto.value = row.desconto.toFixed(2) || 0
   acrescimo.value = row.acrescimo.toFixed(2) || 0
   await carregarItensDoOrcamento(row.id)
-  atualizarTotais()  
+  atualizarTotais()
   desabilitarTudo.value = true
-  entrarOrcamento.value = false  
+  entrarOrcamento.value = false
 }
 
 async function carregarItensDoOrcamento(id) {
