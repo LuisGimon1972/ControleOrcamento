@@ -95,6 +95,7 @@
               trocartitulo()
               entrarOrcamento = false
               desabilitarTudo = false
+              idOrcamentoEdicao = false
               menuAtivo = 'criaorca'
               criarOrcamento = true
             }
@@ -253,17 +254,17 @@
           <div style="margin-bottom: 20px" class="row q-col-gutter-md">
             <!-- SELECT DO CLIENTE -->
             <div class="col-12 col-md-6">
-              <q-input filled v-model="endCliente" label="ENDEREÇO" readonly class="sem-linha" />
+              <q-input filled v-model="endCliente" label="Endereço" readonly class="sem-linha" />
             </div>
             <!-- CPF DO CLIENTE -->
             <div class="col-12 col-md-2">
-              <q-input filled v-model="telCliente" label="TELEFONE" readonly class="sem-linha" />
+              <q-input filled v-model="telCliente" label="Telefone" readonly class="sem-linha" />
             </div>
             <div class="col-12 col-md-2">
-              <q-input filled v-model="celCliente" label="CELULAR" readonly class="sem-linha" />
+              <q-input filled v-model="celCliente" label="Celular" readonly class="sem-linha" />
             </div>
             <div class="col-12 col-md-2">
-              <q-input filled v-model="emailCliente" label="EMAIL" readonly class="sem-linha" />
+              <q-input filled v-model="emailCliente" label="E-mail" readonly class="sem-linha" />
             </div>
 
             <!-- VALIDADE -->
