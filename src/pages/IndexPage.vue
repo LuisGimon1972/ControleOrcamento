@@ -93,6 +93,7 @@
               ocultar()
               limparOrcamento()
               trocartitulo()
+              item.status = 'ABERTO'
               entrarOrcamento = false
               desabilitarTudo = false
               idOrcamentoEdicao = false
@@ -226,12 +227,12 @@
             </div>
 
             <!-- CPF DO CLIENTE -->
-            <div class="col-12 col-md-3">
+            <div class="col-12 col-md-2">
               <q-input filled v-model="cpfCliente" label="CPF" readonly class="sem-linha" />
             </div>
 
             <!-- VALIDADE -->
-            <div class="col-12 col-md-3">
+            <div class="col-12 col-md-2">
               <q-input
                 filled
                 v-model="validade"
@@ -248,6 +249,21 @@
                   <q-date v-model="validade" mask="DD-MM-YYYY" />
                 </q-popup-proxy>
               </q-input>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-select
+                filled
+                v-model="item.status"
+                :options="[
+                  { label: 'ABERTO', value: 'ABERTO' },
+                  { label: 'EM NEGOCIAÇÃO', value: 'EM NEGOCIAÇÃO' },
+                  { label: 'FINALIZADO', value: 'FINALIZADO' },
+                ]"
+                label="Status"
+                emit-value
+                map-options
+                class="sem-linha"
+              />
             </div>
           </div>
 
@@ -1684,7 +1700,7 @@ function excluirItemOrç(controle) {
 // Atualizar totais
 
 function atualizarTotais() {
-  debugger
+  // debugger
   let subtotal = itensOrcamento.value.reduce((acc, i) => {
     i.total = i.quantidade * i.valorUnit
     return acc + i.total
@@ -1751,6 +1767,7 @@ async function salvarOrcamento() {
     valorTotalItens: valorTotalFinal,
     validade: validade.value,
     valorTotal: totalGeral.value,
+    status: item.value.status,
   }
 
   try {
@@ -1962,6 +1979,7 @@ const editarOrcamento = async (row) => {
   observacao.value = row.observacoes || ''
   desconto.value = row.desconto.toFixed(2) || 0
   acrescimo.value = row.acrescimo.toFixed(2) || 0
+  item.value.status = row.status || 'ABERTO'
   await carregarItensDoOrcamento(row.id)
   atualizarTotais()
   entrarOrcamento.value = false
