@@ -226,7 +226,7 @@
 
             <!-- CPF DO CLIENTE -->
             <div class="col-12 col-md-3">
-              <q-input filled v-model="cpfCliente" label="CPF" readonly />
+              <q-input filled v-model="cpfCliente" label="CPF" readonly class="sem-linha" />
             </div>
 
             <!-- VALIDADE -->
@@ -236,6 +236,7 @@
                 v-model="validade"
                 label="Validade do Orçamento"
                 readonly
+                class="sem-linha"
                 @click="abrirCalendario"
               >
                 <template #append>
@@ -252,17 +253,17 @@
           <div style="margin-bottom: 20px" class="row q-col-gutter-md">
             <!-- SELECT DO CLIENTE -->
             <div class="col-12 col-md-6">
-              <q-input filled v-model="endCliente" label="ENDEREÇO" readonly />
+              <q-input filled v-model="endCliente" label="ENDEREÇO" readonly class="sem-linha" />
             </div>
             <!-- CPF DO CLIENTE -->
             <div class="col-12 col-md-2">
-              <q-input filled v-model="telCliente" label="TELEFONE" readonly />
+              <q-input filled v-model="telCliente" label="TELEFONE" readonly class="sem-linha" />
             </div>
             <div class="col-12 col-md-2">
-              <q-input filled v-model="celCliente" label="CELULAR" readonly />
+              <q-input filled v-model="celCliente" label="CELULAR" readonly class="sem-linha" />
             </div>
             <div class="col-12 col-md-2">
-              <q-input filled v-model="emailCliente" label="EMAIL" readonly />
+              <q-input filled v-model="emailCliente" label="EMAIL" readonly class="sem-linha" />
             </div>
 
             <!-- VALIDADE -->
