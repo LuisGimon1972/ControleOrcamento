@@ -229,3 +229,12 @@ body {
 .toastv.show {
   opacity: 1;
 }
+
+.sem-linha .q-field__bottom {
+  display: none !important;
+}
+
+.sem-linha .q-field__control:before,
+.sem-linha .q-field__control:after {
+  display: none !important;
+}
