@@ -255,11 +255,14 @@
               <q-input filled v-model="endCliente" label="ENDEREÇO" readonly />
             </div>
             <!-- CPF DO CLIENTE -->
-            <div class="col-12 col-md-3">
+            <div class="col-12 col-md-2">
               <q-input filled v-model="telCliente" label="TELEFONE" readonly />
             </div>
-            <div class="col-12 col-md-3">
+            <div class="col-12 col-md-2">
               <q-input filled v-model="celCliente" label="CELULAR" readonly />
+            </div>
+            <div class="col-12 col-md-2">
+              <q-input filled v-model="emailCliente" label="EMAIL" readonly />
             </div>
 
             <!-- VALIDADE -->
@@ -1576,6 +1579,7 @@ const cpfCliente = ref('')
 const endCliente = ref('')
 const celCliente = ref('')
 const telCliente = ref('')
+const emailCliente = ref('')
 const itensOrcamento = ref([])
 const acrescimoRef = ref(null)
 titulo.value = 'NOVO ORÇAMENTO'
@@ -1634,6 +1638,7 @@ watch(
     endCliente.value = cliente?.endereco || ''
     celCliente.value = cliente?.celular || ''
     telCliente.value = cliente?.telefone || ''
+    emailCliente.value = cliente?.email || ''
   },
 )
 
