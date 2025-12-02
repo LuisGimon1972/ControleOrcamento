@@ -249,6 +249,22 @@
             </div>
           </div>
 
+          <div style="margin-bottom: 20px" class="row q-col-gutter-md">
+            <!-- SELECT DO CLIENTE -->
+            <div class="col-12 col-md-6">
+              <q-input filled v-model="endCliente" label="ENDEREÇO" readonly />
+            </div>
+            <!-- CPF DO CLIENTE -->
+            <div class="col-12 col-md-3">
+              <q-input filled v-model="telCliente" label="TELEFONE" readonly />
+            </div>
+            <div class="col-12 col-md-3">
+              <q-input filled v-model="celCliente" label="CELULAR" readonly />
+            </div>
+
+            <!-- VALIDADE -->
+          </div>
+
           <q-input
             v-model="buscaItem"
             label="Buscar item"
@@ -1557,6 +1573,9 @@ const criarOrcamento = ref(false)
 const entrarOrcamento = ref(false)
 const clienteSelecionado = ref(null)
 const cpfCliente = ref('')
+const endCliente = ref('')
+const celCliente = ref('')
+const telCliente = ref('')
 const itensOrcamento = ref([])
 const acrescimoRef = ref(null)
 titulo.value = 'NOVO ORÇAMENTO'
@@ -1600,17 +1619,21 @@ const colunasOrcamento = [
 const desconto = ref(0)
 const acrescimo = ref(0)
 const totalGeral = ref(0)
-
+//Pegar dados
 watch(
   () => clienteSelecionado.value,
   (novoId) => {
     if (!novoId) {
       cpfCliente.value = ''
+      endCliente.value = ''
       return
     }
 
     const cliente = clientes.value.find((c) => c.id === novoId)
     cpfCliente.value = cliente?.cpf || ''
+    endCliente.value = cliente?.endereco || ''
+    celCliente.value = cliente?.celular || ''
+    telCliente.value = cliente?.telefone || ''
   },
 )
 
