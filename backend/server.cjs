@@ -289,16 +289,11 @@ app.delete('/itens/:controle', (req, res) => {
 app.get('/itens/buscar-codigo/:codigo', (req, res) => {
   const { codigo } = req.params
 
-  db.get(
-    'SELECT * FROM itens WHERE codbarras = ?',
-    [codigo],
-    (err, row) => {
-      if (err) return res.status(500).json({ error: err.message })
-      res.json(row || null)
-    }
-  )
+  db.get('SELECT * FROM itens WHERE codbarras = ?', [codigo], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message })
+    res.json(row || null)
+  })
 })
-
 
 // ===============================
 // ROTA: Buscar itens por nome ou código de barras
@@ -338,6 +333,7 @@ app.post('/orcamentos', (req, res) => {
     valorTotal,
     validade,
     observacoes,
+    status,
   } = req.body
 
   // Gerar número sequencial ORC0001 Original Original
@@ -357,8 +353,8 @@ app.post('/orcamentos', (req, res) => {
 
     const sqlOrcamento = `
         INSERT INTO orcamentos
-        (numero, clienteId, validade, observacoes, desconto, acrescimo, valorTotalItens, valorTotal)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (numero, clienteId, validade, observacoes, desconto, acrescimo, valorTotalItens, valorTotal, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
 
     db.run(
@@ -372,6 +368,7 @@ app.post('/orcamentos', (req, res) => {
         acrescimo || 0,
         valorTotalItens || 0,
         valorTotal || 0,
+        status || null,
       ],
       function (err) {
         if (err) return res.status(500).json({ error: err.message })
@@ -457,7 +454,7 @@ app.get('/orcamentos/:id', (req, res) => {
 app.put('/orcamentos/:id', (req, res) => {
   const orcamentoId = req.params.id
 
-  const { clienteId, itens, desconto, acrescimo, validade, observacoes } = req.body
+  const { clienteId, itens, desconto, acrescimo, validade, observacoes, status } = req.body
 
   // -----------------------------------
   // Recalcular totais
@@ -478,7 +475,7 @@ app.put('/orcamentos/:id', (req, res) => {
     const sqlUpdate = `
       UPDATE orcamentos
       SET clienteId=?, validade=?, observacoes=?,
-          desconto=?, acrescimo=?, valorTotalItens=?, valorTotal=?
+          desconto=?, acrescimo=?, valorTotalItens=?, valorTotal=?, status=?
       WHERE id=?
     `
 
@@ -492,6 +489,7 @@ app.put('/orcamentos/:id', (req, res) => {
         acrescimo || 0,
         somaItens,
         valorTotalFinal,
+        status,
         orcamentoId,
       ],
       function (err) {
