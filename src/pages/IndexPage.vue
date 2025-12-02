@@ -1619,7 +1619,7 @@ const colunasOrcamento = [
 const desconto = ref(0)
 const acrescimo = ref(0)
 const totalGeral = ref(0)
-
+//Pegar dados
 watch(
   () => clienteSelecionado.value,
   (novoId) => {
