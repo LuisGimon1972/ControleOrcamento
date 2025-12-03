@@ -356,7 +356,7 @@ app.post('/orcamentos', (req, res) => {
     const sqlOrcamento = `
         INSERT INTO orcamentos
         (numero, clienteId, validade, observacoes, condicao, desconto, acrescimo, valorTotalItens, valorTotal, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
 
     db.run(
