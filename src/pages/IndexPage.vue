@@ -377,7 +377,17 @@
             autogrow
             label="Observação"
             class="q-mt-md"
-            :input-style="{ minHeight: '140px' }"
+            :input-style="{ minHeight: '70px' }"
+          />
+
+          <q-input
+            filled
+            v-model="condicao"
+            type="textarea"
+            autogrow
+            label="Condição de Pagamento"
+            class="q-mt-md"
+            :input-style="{ minHeight: '70px' }"
           />
 
           <q-separator spaced />
@@ -986,6 +996,7 @@ const clientesFiltrados = ref([...clientes.value])
 const resultadoBusca = ref([])
 const buscaItem = ref('')
 const observacao = ref(null)
+const condicao = ref(null)
 const validade = ref(null)
 const menuAtivo = ref(null)
 const titulo = ref(null)
@@ -1773,6 +1784,7 @@ async function salvarOrcamento() {
     desconto: desconto.value,
     acrescimo: acrescimo.value,
     observacoes: observacao.value,
+    condicao: condicao.value,
     valorTotalItens: valorTotalFinal,
     validade: validade.value,
     valorTotal: totalGeral.value,
@@ -1810,6 +1822,7 @@ async function limparOrcamento() {
   buscaItem.value = ''
   resultadoBusca.value = []
   observacao.value = ''
+  condicao.value = ''
   validade.value = ''
   endCliente.value = ''
   telCliente.value = ''
@@ -1993,6 +2006,7 @@ const editarOrcamento = async (row) => {
   clienteSelecionado.value = row.clienteId
   validade.value = row.validade
   observacao.value = row.observacoes || ''
+  condicao.value = row.condicao || ''
   desconto.value = row.desconto.toFixed(2) || 0
   acrescimo.value = row.acrescimo.toFixed(2) || 0
   item.value.status = row.status || 'ABERTO'
@@ -2012,6 +2026,7 @@ const verOrcamento = async (row) => {
   clienteSelecionado.value = row.clienteId
   validade.value = row.validade
   observacao.value = row.observacoes || ''
+  condicao.value = row.condicao || ''
   desconto.value = row.desconto.toFixed(2) || 0
   acrescimo.value = row.acrescimo.toFixed(2) || 0
   item.value.status = row.status || 'ABERTO'
@@ -2040,6 +2055,7 @@ async function salvarEdicao() {
     clienteId: clienteSelecionado.value,
     validade: validade.value,
     observacoes: observacao.value,
+    condicao: condicao.value,
     desconto: desconto.value,
     acrescimo: acrescimo.value.toFixed(2),
     itens: itensOrcamento.value,
