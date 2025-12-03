@@ -1018,7 +1018,6 @@ function ocultar() {
   resumoDividas.value = false
   criarOrcamento.value = false
   listarOrcamento.value = false
-  //desabilitarTudo.value = false
 }
 
 function trocartitulo() {
@@ -1090,7 +1089,25 @@ const colunasi = [
 async function carregarClientes() {
   const res = await fetch(`${API_URL}/clientes`)
   clientes.value = await res.json()
-  //showToast('Conexão com o banco de dados estabelecida com sucesso!', 1500)
+}
+
+function bemvinda() {
+  const dlg = Dialog.create({
+    message: `
+    <div class="column items-center" style="padding: 0; margin: 0;">
+      <i class="material-icons" style="font-size:28px; color:#1976d2;">waving_hand</i>
+      </i>
+      <div class="text-body2">Bem-vindo ao Sistema de Controle de Orçamentos!</div>
+    </div>
+  `,
+    html: true,
+    class: 'q-pa-sm text-center',
+    ok: false,
+    cancel: false,
+  })
+  setTimeout(() => {
+    dlg.hide()
+  }, 1500)
 }
 
 async function salvarCliente() {
@@ -1198,7 +1215,6 @@ async function carregarItens() {
 }
 
 async function salvarItem() {
-  // VALIDAÇÃO DE CAMPOS OBRIGATÓRIOS
   if (
     !item.value.nome ||
     !item.value.codbarras ||
@@ -1215,25 +1231,18 @@ async function salvarItem() {
     return
   }
 
-  // 🔎 **VERIFICAR SE O CODIGO DE BARRAS JÁ EXISTE**
   const resCheck = await fetch(`${API_URL}/itens/buscar-codigo/${item.value.codbarras}`)
   const itemExistente = await resCheck.json()
 
-  // Se existir e for um cadastro novo
   if (!item.value.controle && itemExistente) {
     showToast('Código de barras já cadastrado!', 1500)
     return codInput.value?.focus()
   }
 
-  // Se existir e for atualização, não permitir duplicidade com outro item
   if (item.value.controle && itemExistente && itemExistente.controle !== item.value.controle) {
     showToast('Código de barras já está sendo usado em outro item!', 1500)
     return codInput.value?.focus()
   }
-
-  // ==============================
-  //        SALVAR / EDITAR
-  // ==============================
 
   if (!item.value.controle) {
     // CADASTRAR
@@ -1828,7 +1837,6 @@ watch(
 function validarValidade(val, entrarOrcamento) {
   if (!val) return false
 
-  // Quebra data do formato DD-MM-YYYY
   const [dia, mes, ano] = val.split('-')
   const dataFormatada = `${ano}-${mes}-${dia}`
 
@@ -1841,7 +1849,6 @@ function validarValidade(val, entrarOrcamento) {
     showToast('A validade não pode ser menor que a data atual!', 3000)
     return false
   }
-
   return true
 }
 
@@ -2102,6 +2109,7 @@ function validarDecimal(campo) {
 }
 
 onMounted(() => {
+  bemvinda()
   carregarClientes()
   carregarItens()
   carregarReceber()
