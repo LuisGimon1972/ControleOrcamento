@@ -1802,6 +1802,11 @@ async function limparOrcamento() {
   resultadoBusca.value = []
   observacao.value = ''
   validade.value = ''
+  endCliente.value = ''
+  telCliente.value = ''
+  celCliente.value = ''
+  emailCliente.value = ''
+  item.value.status = 'ABERTO'
 }
 
 watch(
