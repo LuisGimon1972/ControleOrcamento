@@ -135,6 +135,7 @@ CREATE TABLE IF NOT EXISTS orcamentos (
   dataCriacao TEXT DEFAULT CURRENT_TIMESTAMP,
   validade TEXT,
   observacoes TEXT,
+  condicao TEXT,
   desconto REAL DEFAULT 0,
   acrescimo REAL DEFAULT 0,
   valorTotalItens REAL DEFAULT 0,
@@ -333,6 +334,7 @@ app.post('/orcamentos', (req, res) => {
     valorTotal,
     validade,
     observacoes,
+    condicao,
     status,
   } = req.body
 
@@ -353,7 +355,7 @@ app.post('/orcamentos', (req, res) => {
 
     const sqlOrcamento = `
         INSERT INTO orcamentos
-        (numero, clienteId, validade, observacoes, desconto, acrescimo, valorTotalItens, valorTotal, status)
+        (numero, clienteId, validade, observacoes, condicao, desconto, acrescimo, valorTotalItens, valorTotal, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
 
@@ -364,6 +366,7 @@ app.post('/orcamentos', (req, res) => {
         clienteId,
         validade || null,
         observacoes || null,
+        condicao || null,
         desconto || 0,
         acrescimo || 0,
         valorTotalItens || 0,
@@ -454,7 +457,8 @@ app.get('/orcamentos/:id', (req, res) => {
 app.put('/orcamentos/:id', (req, res) => {
   const orcamentoId = req.params.id
 
-  const { clienteId, itens, desconto, acrescimo, validade, observacoes, status } = req.body
+  const { clienteId, itens, desconto, acrescimo, validade, observacoes, condicao, status } =
+    req.body
 
   // -----------------------------------
   // Recalcular totais
@@ -474,7 +478,7 @@ app.put('/orcamentos/:id', (req, res) => {
 
     const sqlUpdate = `
       UPDATE orcamentos
-      SET clienteId=?, validade=?, observacoes=?,
+      SET clienteId=?, validade=?, observacoes=?, condicao=?,
           desconto=?, acrescimo=?, valorTotalItens=?, valorTotal=?, status=?
       WHERE id=?
     `
@@ -485,6 +489,7 @@ app.put('/orcamentos/:id', (req, res) => {
         clienteId,
         validade || null,
         observacoes || null,
+        condicao || null,
         desconto || 0,
         acrescimo || 0,
         somaItens,
