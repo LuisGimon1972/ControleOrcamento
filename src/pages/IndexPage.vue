@@ -1968,6 +1968,10 @@ const idOrcamentoEdicao = ref(null)
 
 const editarOrcamento = async (row) => {
   //debugger
+  if (row.status?.toLowerCase() === 'finalizado') {
+    showToast('Este orçamento está Finalizado e não pode ser editado!', 2000)
+    return
+  }
   console.log('DADOS ENVIADOS PARA EDITAR:', row)
   titulo.value = 'ATUALIZAR ORÇAMENTO' + '  -  ' + 'Nº:' + row.numero
   entrarOrcamento.value = true
@@ -1998,6 +2002,7 @@ const verOrcamento = async (row) => {
   observacao.value = row.observacoes || ''
   desconto.value = row.desconto.toFixed(2) || 0
   acrescimo.value = row.acrescimo.toFixed(2) || 0
+  item.value.status = row.status || 'ABERTO'
   await carregarItensDoOrcamento(row.id)
   atualizarTotais()
   desabilitarTudo.value = true
