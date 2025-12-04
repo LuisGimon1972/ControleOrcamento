@@ -1037,6 +1037,7 @@ const buscarCep = async (val) => {
 
     if (res.data.erro) {
       console.warn('CEP não encontrado')
+      showToast('CEP não encontrado ou inválido!', 1000)
       return
     }
     //cliente.value.endereco = res.data.logradouro || ''
@@ -1046,6 +1047,7 @@ const buscarCep = async (val) => {
     cliente.value.endereco = res.data.logradouro.toUpperCase() || ''
   } catch (err) {
     console.error('Erro ao buscar CEP', err)
+    showToast('Erro ao buscar CEP!', 1000)
   }
 }
 
