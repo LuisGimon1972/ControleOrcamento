@@ -486,7 +486,18 @@
                     </div>
                   </div>
                   <div class="flex gap-2">
-                    <div class="col">
+                    <div style="width: 10%">
+                      <q-input
+                        outlined
+                        color="black"
+                        class="dark-border"
+                        v-model="cliente.cep"
+                        label="CEP"
+                        mask="#####-###"
+                        @update:model-value="buscarCep"
+                      />
+                    </div>
+                    <div style="width: 40%">
                       <q-input
                         outlined
                         color="black"
@@ -497,7 +508,18 @@
                         maxlength="100"
                       />
                     </div>
-                    <div class="col">
+                    <div style="width: 25%">
+                      <q-input
+                        outlined
+                        color="black"
+                        class="w-1/3 dark-border"
+                        v-model="cliente.bairro"
+                        @update:model-value="(val) => (cliente.bairro = val.toUpperCase())"
+                        label="Bairro"
+                        maxlength="30"
+                      />
+                    </div>
+                    <div style="width: 25%">
                       <q-input
                         outlined
                         color="black"
@@ -508,6 +530,8 @@
                         maxlength="30"
                       />
                     </div>
+                  </div>
+                  <div class="flex gap-2">
                     <div class="col">
                       <q-input
                         outlined
@@ -518,8 +542,6 @@
                         mask="(##)####.####"
                       />
                     </div>
-                  </div>
-                  <div class="flex gap-2">
                     <div class="col">
                       <q-input
                         outlined
@@ -999,6 +1021,29 @@ const condicao = ref(null)
 const validade = ref(null)
 const menuAtivo = ref(null)
 const titulo = ref(null)
+
+const buscarCep = async (val) => {
+  const cep = val.replace(/\D/g, '')
+
+  if (cep.length !== 8) return
+
+  try {
+    const res = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
+
+    if (res.data.erro) {
+      console.warn('CEP não encontrado')
+      return
+    }
+    //cliente.value.endereco = res.data.logradouro || ''
+    //cliente.value.cidade = res.data.localidade || ''
+    //cliente.value.estado = res.data.uf || ''
+    cliente.value.bairro = res.data.bairro.toUpperCase() || ''
+    cliente.value.endereco = res.data.logradouro.toUpperCase() || ''
+  } catch (err) {
+    console.error('Erro ao buscar CEP', err)
+  }
+}
+
 const atualizarListaFiltrada = (termo) => {
   if (!termo || termo.length < 3) {
     clientesFiltrados.value = [...clientes.value]

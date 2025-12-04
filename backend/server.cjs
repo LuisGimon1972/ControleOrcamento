@@ -26,7 +26,7 @@ app.listen(PORT, () => {
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS clientes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    cpf TEXT, nome TEXT, fantasia TEXT,
+    cpf TEXT, nome TEXT, fantasia TEXT, cep TEXT, bairro TEXT,
     endereco TEXT, email TEXT,
     telefone TEXT, celular TEXT, limite REAL
   )`)
@@ -65,7 +65,7 @@ db.serialize(() => {
   )
 `)
 
-  //db.run("ALTER TABLE ordemServico ADD COLUMN adiantamento REAL DEFAULT 0");
+  //db.run('ALTER TABLE clientes ADD COLUMN bairro TEXT')
 
   // ================================
   // TABELA: itensOrdemServico
@@ -170,11 +170,11 @@ app.get('/clientes', (req, res) => {
 })
 
 app.post('/clientes', (req, res) => {
-  const { cpf, nome, fantasia, endereco, email, telefone, celular, limite } = req.body
+  const { cpf, nome, fantasia, endereco, cep, bairro, email, telefone, celular, limite } = req.body
   db.run(
-    `INSERT INTO clientes (cpf, nome, fantasia, endereco, email, telefone, celular, limite)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [cpf, nome, fantasia, endereco, email, telefone, celular, limite],
+    `INSERT INTO clientes (cpf, nome, fantasia, endereco, cep, bairro, email, telefone, celular, limite)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [cpf, nome, fantasia, endereco, cep, bairro, email, telefone, celular, limite],
     function (err) {
       if (err) return res.status(500).send(err)
       res.json({ id: this.lastID })
@@ -183,10 +183,10 @@ app.post('/clientes', (req, res) => {
 })
 
 app.put('/clientes/:id', (req, res) => {
-  const { cpf, nome, fantasia, endereco, email, telefone, celular, limite } = req.body
+  const { cpf, nome, fantasia, endereco, cep, bairro, email, telefone, celular, limite } = req.body
   db.run(
-    `UPDATE clientes SET cpf=?, nome=?, fantasia=?, endereco=?, email=?, telefone=?, celular=?, limite =? WHERE id=?`,
-    [cpf, nome, fantasia, endereco, email, telefone, celular, limite, req.params.id],
+    `UPDATE clientes SET cpf=?, nome=?, fantasia=?, endereco=?, cep=?, bairro=?, email=?, telefone=?, celular=?, limite =? WHERE id=?`,
+    [cpf, nome, fantasia, endereco, cep, bairro, email, telefone, celular, limite, req.params.id],
     function (err) {
       if (err) return res.status(500).send(err)
       res.sendStatus(200)
