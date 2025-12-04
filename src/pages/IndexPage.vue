@@ -1920,6 +1920,8 @@ async function limparOrcamento() {
   condicao.value = ''
   validade.value = ''
   endCliente.value = ''
+  endCep.value = ''
+  endBairro.value = ''
   telCliente.value = ''
   celCliente.value = ''
   emailCliente.value = ''
