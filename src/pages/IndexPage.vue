@@ -503,9 +503,8 @@
                         color="black"
                         class="w-1/3 dark-border"
                         v-model="cliente.endereco"
-                        @update:model-value="(val) => (cliente.endereco = val.toUpperCase())"
                         label="Endereço"
-                        maxlength="100"
+                        @keydown.prevent
                       />
                     </div>
                     <div style="width: 25%">
@@ -516,7 +515,7 @@
                         v-model="cliente.bairro"
                         @update:model-value="(val) => (cliente.bairro = val.toUpperCase())"
                         label="Bairro"
-                        maxlength="30"
+                        @keydown.prevent
                       />
                     </div>
                     <div style="width: 25%">
