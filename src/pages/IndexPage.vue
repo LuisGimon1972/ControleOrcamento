@@ -494,6 +494,7 @@
                   <div class="flex gap-2">
                     <div style="width: 10%">
                       <q-input
+                        ref="cepInput"
                         outlined
                         color="black"
                         class="dark-border"
@@ -1004,6 +1005,7 @@ const item = ref(novoItem())
 const itens = ref([])
 const nomeInput = ref(null)
 const cpfInput = ref(null)
+const cepInput = ref(null)
 const nomeiInput = ref(null)
 const limiteInput = ref(null)
 const codInput = ref(null)
@@ -1026,6 +1028,7 @@ const condicao = ref(null)
 const validade = ref(null)
 const menuAtivo = ref(null)
 const titulo = ref(null)
+const cepcerto = ref(false)
 
 const buscarCep = async (val) => {
   const cep = val.replace(/\D/g, '')
@@ -1038,6 +1041,7 @@ const buscarCep = async (val) => {
     if (res.data.erro) {
       console.warn('CEP não encontrado')
       showToast('CEP não encontrado ou inválido!', 1000)
+      cepcerto.value = false
       return
     }
     //cliente.value.endereco = res.data.logradouro || ''
@@ -1045,6 +1049,7 @@ const buscarCep = async (val) => {
     //cliente.value.estado = res.data.uf || ''
     cliente.value.bairro = res.data.bairro.toUpperCase() || ''
     cliente.value.endereco = res.data.logradouro.toUpperCase() || ''
+    cepcerto.value = true
   } catch (err) {
     console.error('Erro ao buscar CEP', err)
     showToast('Erro ao buscar CEP!', 1000)
@@ -1181,6 +1186,12 @@ async function salvarCliente() {
     if (!cliente.value.limite) return limiteInput.value?.focus()
     return
   }
+  if (cepcerto.value == false) {
+    showToast('Preencha um CEP correito!', 1000)
+    cliente.value.cep = ''
+    return cepInput.value?.focus()
+  }
+
   if (!cliente.value.id) {
     const clientesExistentes = await fetch(`${API_URL}/clientes`).then((res) => res.json())
     const cpfDuplicado = clientesExistentes.find((c) => c.cpf === cliente.value.cpf)
