@@ -289,7 +289,7 @@
           <q-input
             v-model="buscaItem"
             label="Buscar item"
-            @keyup.enter="buscarItem"
+            @keyup="navegarLista"
             class="input-grande"
           >
             <template #append>
@@ -300,18 +300,17 @@
           <q-list bordered separator v-if="resultadoBusca.length > 0">
             <q-item class="bg-grey-3 text-bold">
               <q-item-section> Nome </q-item-section>
-
               <q-item-section> Código </q-item-section>
-
               <q-item-section side> Preço </q-item-section>
             </q-item>
 
             <!-- LINHAS -->
             <q-item
-              v-for="item in resultadoBusca"
+              v-for="(item, index) in resultadoBusca"
               :key="item.controle"
               clickable
               @click="adicionarItem(item)"
+              :class="{ 'bg-blue-2': index === itemSelecionado }"
             >
               <q-item-section>
                 <q-item-label>{{ item.nome }}</q-item-label>
@@ -1619,6 +1618,7 @@ const celCliente = ref('')
 const telCliente = ref('')
 const emailCliente = ref('')
 const itensOrcamento = ref([])
+const itemSelecionado = ref(-1)
 const acrescimoRef = ref(null)
 titulo.value = 'NOVO ORÇAMENTO'
 const colunasOrcamento = [
@@ -1680,26 +1680,64 @@ watch(
   },
 )
 
+function navegarLista(event) {
+  if (event.key === 'Enter') {
+    if (itemSelecionado.value < 0) {
+      buscarItem()
+    } else {
+      adicionarItem(resultadoBusca.value[itemSelecionado.value])
+    }
+    return
+  }
+  const total = resultadoBusca.value.length
+
+  if (total === 0) return
+
+  if (event.key === 'ArrowDown') {
+    itemSelecionado.value = (itemSelecionado.value + 1) % total
+  }
+
+  if (event.key === 'ArrowUp') {
+    itemSelecionado.value = (itemSelecionado.value - 1 + total) % total
+  }
+
+  if (event.key === 'Enter') {
+    if (itemSelecionado.value >= 0) {
+      adicionarItem(resultadoBusca.value[itemSelecionado.value])
+    } else {
+      buscarItem()
+    }
+  }
+}
+
 const buscarItem = async () => {
   try {
     const res = await axios.get('http://localhost:3000/itens/busca/buscar', {
       params: { texto: buscaItem.value },
     })
 
-    resultadoBusca.value = res.data
+    resultadoBusca.value = res.data || []
 
-    if (!res.data || res.data.length === 0) {
+    if (resultadoBusca.value.length === 0) {
       showToast('Nenhum item encontrado!', 1500)
+      itemSelecionado.value = -1
+    } else {
+      itemSelecionado.value = 0
     }
 
-    console.log('Itens encontrados:', res.data)
+    console.log('Itens encontrados:', resultadoBusca.value)
   } catch (err) {
     console.error('Erro ao buscar itens:', err)
     showToast('Erro ao buscar itens!', 3000)
+
+    resultadoBusca.value = []
+    itemSelecionado.value = -1
   }
 }
 
 function adicionarItem(item) {
+  if (!item) return
+
   itensOrcamento.value.push({
     controle: item.controle,
     nome: item.nome,
@@ -1707,9 +1745,12 @@ function adicionarItem(item) {
     valorUnit: item.precovenda,
     total: item.precovenda,
   })
+
   atualizarTotais()
+
   resultadoBusca.value = []
   buscaItem.value = ''
+  itemSelecionado.value = -1
 }
 
 function excluirItemOrç(controle) {
