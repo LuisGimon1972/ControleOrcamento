@@ -269,8 +269,14 @@
 
           <div style="margin-bottom: 20px" class="row q-col-gutter-md">
             <!-- SELECT DO CLIENTE -->
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-1">
+              <q-input filled v-model="endCep" label="CEP" readonly class="sem-linha" />
+            </div>
+            <div class="col-12 col-md-3">
               <q-input filled v-model="endCliente" label="Endereço" readonly class="sem-linha" />
+            </div>
+            <div class="col-12 col-md-2">
+              <q-input filled v-model="endBairro" label="Bairro" readonly class="sem-linha" />
             </div>
             <!-- CPF DO CLIENTE -->
             <div class="col-12 col-md-2">
@@ -1658,6 +1664,8 @@ const entrarOrcamento = ref(false)
 const clienteSelecionado = ref(null)
 const cpfCliente = ref('')
 const endCliente = ref('')
+const endCep = ref('')
+const endBairro = ref('')
 const celCliente = ref('')
 const telCliente = ref('')
 const emailCliente = ref('')
@@ -1718,6 +1726,8 @@ watch(
     const cliente = clientes.value.find((c) => c.id === novoId)
     cpfCliente.value = cliente?.cpf || ''
     endCliente.value = cliente?.endereco || ''
+    endCep.value = cliente?.cep || ''
+    endBairro.value = cliente?.bairro || ''
     celCliente.value = cliente?.celular || ''
     telCliente.value = cliente?.telefone || ''
     emailCliente.value = cliente?.email || ''
