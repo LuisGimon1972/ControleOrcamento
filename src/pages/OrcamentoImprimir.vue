@@ -32,6 +32,7 @@
     <div class="text-right q-mt-md">
       <strong>Total Geral: R$ {{ totalGeral.toFixed(2) }}</strong>
     </div>
+    <q-btn color="primary" icon="print" label="Imprimir" @click="imprimirOrcamento(row)" />
   </div>
 </template>
 
@@ -39,6 +40,12 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { API_URL } from '../config'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+function imprimirOrcamento(row) {
+  router.push(`/imprimir-orcamento/${row.id}`)
+}
 
 const route = useRoute()
 const orcamentoId = route.params.id
