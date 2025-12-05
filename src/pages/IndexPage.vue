@@ -612,7 +612,12 @@
                   icon="visibility"
                   @click="((entrarOrcamento = true), verOrcamento(props.row))"
                 />
-                <q-btn size="sm" color="positive" icon="print" @click="imprimir(props.row.id)" />
+                <q-btn
+                  size="sm"
+                  color="positive"
+                  icon="print"
+                  @click="imprimirOrcamento(props.row.id)"
+                />
               </q-td>
             </template>
           </q-table>
@@ -968,7 +973,7 @@
 <script setup>
 import logo from 'src/assets/logo.png'
 import usuario from 'src/assets/usuario.png'
-import { imprimirOrcamento } from 'src/utils/impressao.js'
+import { imprimirOrcamentoPorId } from 'src/utils/impressao.js'
 import { ref, onMounted, watch } from 'vue'
 import novoCliente from 'src/models/Cliente'
 import novoItem from 'src/models/Item'
@@ -2187,8 +2192,8 @@ function abrirCalendario() {
 
 //import { useRouter } from 'vue-router'
 
-function imprimir(row) {
-  imprimirOrcamento(row)
+function imprimirOrcamento(id) {
+  imprimirOrcamentoPorId(id)
 }
 
 //const router = useRouter()

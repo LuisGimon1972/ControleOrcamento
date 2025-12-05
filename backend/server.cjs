@@ -454,6 +454,33 @@ app.get('/orcamentos/:id', (req, res) => {
   })
 })
 
+app.get('/orcamentos-detalhe/:id', (req, res) => {
+  const { id } = req.params
+
+  const sqlOrcamento = `
+    SELECT o.*, c.nome AS clienteNome, c.cpf AS clienteCPF,
+           c.endereco AS clienteEndereco, c.telefone AS clienteTelefone,
+           c.celular AS clienteCelular, c.email AS clienteEmail
+    FROM orcamentos o
+    LEFT JOIN clientes c ON c.id = o.clienteId
+    WHERE o.id = ?
+  `
+
+  db.get(sqlOrcamento, [id], (err, orcamento) => {
+    if (err) return res.status(500).json({ error: err.message })
+    if (!orcamento) return res.status(404).json({ error: 'Orçamento não encontrado' })
+
+    db.all(`SELECT * FROM itensOrcamento WHERE orcamentoId = ?`, [id], (err, itens) => {
+      if (err) return res.status(500).json({ error: err.message })
+
+      res.json({
+        ...orcamento,
+        itens,
+      })
+    })
+  })
+})
+
 app.put('/orcamentos/:id', (req, res) => {
   const orcamentoId = req.params.id
 

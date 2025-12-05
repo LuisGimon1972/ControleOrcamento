@@ -1,59 +1,74 @@
-// utils/impressao.js
+// src/utils/impressao.js
 
-export function imprimirOrcamento(orc) {
-  if (!orc) {
-    console.error('Nenhum orçamento foi enviado para impressão.')
-    return
+// Busca orçamento real no backend
+export async function buscarOrcamento(id) {
+  const res = await fetch(`http://localhost:3000/orcamentos-detalhe/${id}`)
+
+  if (!res.ok) {
+    throw new Error('Erro ao buscar orçamento')
   }
 
-  console.log('Gerando impressão do orçamento...', orc)
+  return await res.json()
+}
 
-  // -----------------------------
-  //   TEMPLATE DO CUPOM 80mm
-  // -----------------------------
-  const texto = `
+// Função para imprimir orçamento via ID
+export async function imprimirOrcamentoPorId(id) {
+  const dados = await buscarOrcamento(id)
+
+  const texto = gerarTextoCupom(dados)
+  imprimirTexto(texto)
+}
+
+// Monta texto 80mm
+export function gerarTextoCupom(orc) {
+  const numero = orc?.numero ?? '-'
+  const cliente = orc?.clienteNome ?? '-'
+  const data = orc?.dataCriacao ?? '-'
+
+  const itens = Array.isArray(orc?.itens)
+    ? orc.itens
+        .map((i) => {
+          const desc = (i.descricao ?? '').padEnd(15).slice(0, 15)
+          const qtd = String(i.quantidade ?? 0).padStart(3)
+          const total = Number(i.total ?? 0).toFixed(2)
+          return `${desc} ${qtd}  R$ ${total}`
+        })
+        .join('\n')
+    : 'Nenhum item'
+
+  const subtotal = Number(orc?.valorTotalItens ?? 0).toFixed(2)
+  const desconto = Number(orc?.desconto ?? 0).toFixed(2)
+  const acrescimo = Number(orc?.acrescimo ?? 0).toFixed(2)
+  const total = Number(orc?.valorTotal ?? 0).toFixed(2)
+
+  return `
 ================================
-        ORÇAMENTO Nº ${orc.numero}
+        ORÇAMENTO Nº ${numero}
 ================================
-CLIENTE: ${orc.cliente || '-'}
-FONE: ${orc.telefone || '-'}
-DATA: ${orc.data || '-'}
+CLIENTE: ${cliente}
+DATA: ${data}
 
 --------------------------------
-ITEM             QTD   TOTAL
+ITEM             QTD    TOTAL
 --------------------------------
-${orc.itens
-  ?.map(
-    (i) =>
-      `${i.nome.padEnd(15).substring(0, 15)} ${String(i.quantidade).padEnd(
-        3,
-      )} R$ ${i.total.toFixed(2)}`,
-  )
-  .join('\n')}
+${itens}
 
 --------------------------------
-SUBTOTAL: R$ ${orc.subtotal?.toFixed(2) || '0.00'}
-DESCONTO: R$ ${orc.desconto?.toFixed(2) || '0.00'}
-ACRÉSCIMO: R$ ${orc.acrescimo?.toFixed(2) || '0.00'}
-TOTAL: R$ ${orc.total?.toFixed(2) || '0.00'}
+SUBTOTAL:   R$ ${subtotal}
+DESCONTO:   R$ ${desconto}
+ACRÉSCIMO:  R$ ${acrescimo}
+TOTAL:      R$ ${total}
 --------------------------------
 
 Obrigado pela preferência!
 `
+}
 
-  // --------------------------------------------------------
-  //  AQUI VOCÊ ENVIA PARA A IMPRESSORA REAL (Node, ESC/POS…)
-  // --------------------------------------------------------
-
-  try {
-    // Exemplo: impressão via janela popup
-    const printWindow = window.open('', '_blank', 'width=300,height=600')
-    printWindow.document.write(`<pre style="font-size:14px">${texto}</pre>`)
-    printWindow.document.close()
-    printWindow.focus()
-    printWindow.print()
-    printWindow.close()
-  } catch (e) {
-    console.error('Erro ao imprimir:', e)
-  }
+// Abre impressão
+export function imprimirTexto(texto) {
+  const w = window.open('', '_blank', 'width=300,height=600')
+  w.document.write(`<pre style="font-size:14px">${texto}</pre>`)
+  w.document.close()
+  w.print()
+  w.close()
 }
