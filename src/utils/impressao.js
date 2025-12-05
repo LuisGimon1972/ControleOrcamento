@@ -20,6 +20,7 @@ export async function imprimirOrcamentoPorId(id) {
 export function gerarTextoCupom(orc) {
   const numero = orc?.numero ?? '-'
   const cliente = orc?.clienteNome ?? '-'
+  const clientecpf = orc?.clienteCPF ?? '-'
   const data = orc?.dataCriacao ?? '-'
   const validade = orc?.validade ?? '-'
 
@@ -44,6 +45,7 @@ export function gerarTextoCupom(orc) {
         ORÇAMENTO Nº ${numero}
 ================================
 CLIENTE: ${cliente}
+CPF Nº: ${clientecpf}
 DATA: ${data}
 VALIDADE: ${validade}
 
