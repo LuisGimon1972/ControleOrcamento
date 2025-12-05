@@ -1,6 +1,3 @@
-// src/utils/impressao.js
-
-// Busca orçamento real no backend
 export async function buscarOrcamento(id) {
   const res = await fetch(`http://localhost:3000/orcamentos-detalhe/${id}`)
 
@@ -24,6 +21,7 @@ export function gerarTextoCupom(orc) {
   const numero = orc?.numero ?? '-'
   const cliente = orc?.clienteNome ?? '-'
   const data = orc?.dataCriacao ?? '-'
+  const validade = orc?.validade ?? '-'
 
   const itens = Array.isArray(orc?.itens)
     ? orc.itens
@@ -47,6 +45,7 @@ export function gerarTextoCupom(orc) {
 ================================
 CLIENTE: ${cliente}
 DATA: ${data}
+VALIDADE: ${validade}
 
 --------------------------------
 ITEM             QTD    TOTAL
@@ -66,7 +65,7 @@ Obrigado pela preferência!
 
 // Abre impressão
 export function imprimirTexto(texto) {
-  const w = window.open('', '_blank', 'width=300,height=600')
+  const w = window.open('', '_blank', 'width=700,height=600')
   w.document.write(`<pre style="font-size:14px">${texto}</pre>`)
   w.document.close()
   w.print()
