@@ -1030,31 +1030,6 @@ const menuAtivo = ref(null)
 const titulo = ref(null)
 const cepcerto = ref(null)
 
-const buscarCep = async (val) => {
-  const cep = val.replace(/\D/g, '')
-
-  if (cep.length !== 8) return
-
-  try {
-    const res = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
-
-    if (res.data.erro) {
-      showToast('CEP não encontrado ou inválido!', 1000)
-      cepcerto.value = false
-      return
-    }
-    //cliente.value.endereco = res.data.logradouro || ''
-    //cliente.value.cidade = res.data.localidade || ''
-    //cliente.value.estado = res.data.uf || ''
-    cliente.value.bairro = res.data.bairro.toUpperCase() || ''
-    cliente.value.endereco = res.data.logradouro.toUpperCase() || ''
-    cepcerto.value = true
-  } catch (err) {
-    console.error('Erro ao buscar CEP', err)
-    showToast('Erro ao buscar CEP!', 1000)
-  }
-}
-
 const atualizarListaFiltrada = (termo) => {
   if (!termo || termo.length < 3) {
     clientesFiltrados.value = [...clientes.value]
@@ -1174,6 +1149,29 @@ function bemvinda() {
   setTimeout(() => {
     dlg.hide()
   }, 1500)
+}
+
+const buscarCep = async (val) => {
+  const cep = val.replace(/\D/g, '')
+
+  if (cep.length !== 8) return
+
+  try {
+    const res = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
+
+    if (res.data.erro) {
+      showToast('CEP não encontrado ou inválido!', 1000)
+      cepcerto.value = false
+      return
+    }
+    //cliente.value.endereco = res.data.logradouro || ''  //cliente.value.cidade = res.data.localidade || ''  //cliente.value.estado = res.data.uf || ''
+    cliente.value.bairro = res.data.bairro.toUpperCase() || ''
+    cliente.value.endereco = res.data.logradouro.toUpperCase() || ''
+    cepcerto.value = true
+  } catch (err) {
+    console.error('Erro ao buscar CEP', err)
+    showToast('Erro ao buscar CEP!', 1000)
+  }
 }
 
 async function salvarCliente() {
@@ -1317,7 +1315,6 @@ async function salvarItem() {
   }
 
   if (!item.value.controle) {
-    // CADASTRAR
     const res = await fetch(`${API_URL}/itens`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1331,7 +1328,6 @@ async function salvarItem() {
     limparFormularioI()
     carregarItens()
   } else {
-    // EDITAR
     await fetch(`${API_URL}/itens/${item.value.controle}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -2193,10 +2189,7 @@ function abrirCalendario() {
   console.log('Abrindo calendário...')
 }
 
-// VER ORÇAMENTO
 const desabilitarTudo = ref(false)
-//desabilitarTudo.value = false //Habilita
-//desabilitarTudo.value = true //Deshabila
 
 function showToast(message, tempo = 3000) {
   const toast = document.getElementById('toast')
