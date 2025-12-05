@@ -612,12 +612,7 @@
                   icon="visibility"
                   @click="((entrarOrcamento = true), verOrcamento(props.row))"
                 />
-                <q-btn
-                  size="sm"
-                  color="positive"
-                  icon="print"
-                  @click="imprimirOrcamento(props.row.id)"
-                />
+                <q-btn size="sm" color="positive" icon="print" @click="imprimir(props.row.id)" />
               </q-td>
             </template>
           </q-table>
@@ -973,6 +968,7 @@
 <script setup>
 import logo from 'src/assets/logo.png'
 import usuario from 'src/assets/usuario.png'
+import { imprimirOrcamento } from 'src/utils/impressao.js'
 import { ref, onMounted, watch } from 'vue'
 import novoCliente from 'src/models/Cliente'
 import novoItem from 'src/models/Item'
@@ -2189,11 +2185,15 @@ function abrirCalendario() {
   console.log('Abrindo calendário...')
 }
 
-import { useRouter } from 'vue-router'
+//import { useRouter } from 'vue-router'
 
-const router = useRouter()
+function imprimir(row) {
+  imprimirOrcamento(row)
+}
 
-function imprimirOrcamento(row) {
+//const router = useRouter()
+
+/*function imprimirOrcamento(row) {
   if (!row?.id) {
     showToast('ID do orçamento não encontrado!', 1500)
     console.error('ID do orçamento não encontrado:', row)
@@ -2201,7 +2201,7 @@ function imprimirOrcamento(row) {
   }
 
   router.push(`/imprimir-orcamento/${row.id}`)
-}
+}*/
 
 const desabilitarTudo = ref(false)
 
