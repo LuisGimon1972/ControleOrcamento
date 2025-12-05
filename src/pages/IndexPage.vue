@@ -616,7 +616,7 @@
                   size="sm"
                   color="positive"
                   icon="print"
-                  @click="imprimiOrcamento(props.row.id)"
+                  @click="imprimirOrcamento(props.row.id)"
                 />
               </q-td>
             </template>
@@ -2187,6 +2187,20 @@ async function salvarEdicao() {
 
 function abrirCalendario() {
   console.log('Abrindo calendário...')
+}
+
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+function imprimirOrcamento(row) {
+  if (!row?.id) {
+    showToast('ID do orçamento não encontrado!', 1500)
+    console.error('ID do orçamento não encontrado:', row)
+    return
+  }
+
+  router.push(`/imprimir-orcamento/${row.id}`)
 }
 
 const desabilitarTudo = ref(false)
