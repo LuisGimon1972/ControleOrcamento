@@ -1028,7 +1028,7 @@ const condicao = ref(null)
 const validade = ref(null)
 const menuAtivo = ref(null)
 const titulo = ref(null)
-const cepcerto = ref(false)
+const cepcerto = ref(null)
 
 const buscarCep = async (val) => {
   const cep = val.replace(/\D/g, '')
@@ -1039,7 +1039,6 @@ const buscarCep = async (val) => {
     const res = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
 
     if (res.data.erro) {
-      console.warn('CEP não encontrado')
       showToast('CEP não encontrado ou inválido!', 1000)
       cepcerto.value = false
       return
