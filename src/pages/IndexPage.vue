@@ -474,14 +474,21 @@
           <q-card class="q-pa-md">
             <div class="text-h6 q-mb-md">Relatório por Período</div>
 
-            <q-input v-model="dataInicio" label="Data Inicial" type="date" filled />
+            <q-input ref="DataInput" v-model="dataInicio" label="Data Inicial" type="date" filled />
             <q-input v-model="dataFim" label="Data Final" type="date" filled class="q-mt-md" />
+
+            <q-btn
+              class="q-mt-lg q-mr-md"
+              color="primary"
+              label="Gerar Relatório"
+              @click="gerarRelatorio"
+            />
 
             <q-btn
               class="q-mt-lg"
               color="primary"
-              label="Gerar Relatório"
-              @click="gerarRelatorio"
+              label="Fechar"
+              @click="dialogRelatorioPeriodo = false"
             />
           </q-card>
         </q-dialog>
@@ -1045,6 +1052,7 @@ const item = ref(novoItem())
 const itens = ref([])
 const nomeInput = ref(null)
 const cpfInput = ref(null)
+const DataInput = ref(null)
 const cepInput = ref(null)
 const nomeiInput = ref(null)
 const limiteInput = ref(null)
@@ -2244,11 +2252,28 @@ function abrirRelatorioPeriodo() {
 
 async function gerarRelatorio() {
   if (!dataInicio.value || !dataFim.value) {
-    $q.notify({ type: 'warning', message: 'Selecione as duas datas!' })
+    $q.notify({
+      type: 'warning',
+      message: 'Selecione as datas!',
+    })
+    return
+  }
+  if (dataInicio.value > dataFim.value) {
+    showToast(`A data de inicio maior que a data final!`, 1500)
+    dataFim.value = ''
+    dataInicio.value = ''
+    DataInput.value?.focus()
     return
   }
 
-  await gerarRelatorioPeriodo(dataInicio.value, dataFim.value)
+  const ok = await gerarRelatorioPeriodo(dataInicio.value, dataFim.value)
+  if (!ok) {
+    showToast(`Nenhum orçamento encontrado no período!`, 1500)
+  }
+  dataInicio.value = ''
+  dataFim.value = ''
+  dialogRelatorioPeriodo.value = false
+  return
 }
 
 //const router = useRouter()
