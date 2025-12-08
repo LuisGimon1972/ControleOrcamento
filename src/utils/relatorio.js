@@ -5,8 +5,7 @@ export async function gerarRelatorioPeriodo(inicio, fim) {
     const dados = await res.json()
 
     if (!dados.length) {
-      alert('Nenhum orçamento encontrado no período.')
-      return
+      return false
     }
 
     // Monta o HTML do relatório (A4) dkjsakljdksaljdklsajdklsajdkljs
@@ -82,8 +81,9 @@ export async function gerarRelatorioPeriodo(inicio, fim) {
       // remove iframe após imprimir
       setTimeout(() => iframe.remove(), 500)
     }, 300)
+    return true
   } catch (err) {
     console.error('Erro ao gerar relatório:', err)
-    alert('Erro ao gerar relatório.')
+    return false
   }
 }
