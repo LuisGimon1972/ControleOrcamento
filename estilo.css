@@ -238,3 +238,27 @@ body {
 .sem-linha .q-field__control:after {
   display: none !important;
 }
+
+/* Oculta o relatório na tela */
+#relatorio-impressao {
+  display: none;
+}
+
+/* Exibe somente na impressão */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #relatorio-impressao,
+  #relatorio-impressao * {
+    visibility: visible;
+  }
+
+  #relatorio-impressao {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}

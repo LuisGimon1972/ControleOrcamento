@@ -129,6 +129,24 @@
 
         <q-item
           clickable
+          :active="menuAtivo === 'relatoriorca'"
+          active-class="item-ativo"
+          @click="
+            () => {
+              ocultar()
+              abrirRelatorioPeriodo()
+              menuAtivo = 'relatoriorca'
+            }
+          "
+        >
+          <q-item-section avatar>
+            <q-icon name="format_list_bulleted" />
+          </q-item-section>
+          <q-item-section> Relatório Orçamentos </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
           :active="menuAtivo === 'mostrarR'"
           active-class="item-ativo"
           @click="
@@ -447,6 +465,26 @@
             class="q-ml-md"
           />
         </div>
+
+        <div id="relatorio-impressao">
+          <!-- TODO seu HTML para imprimir -->
+        </div>
+
+        <q-dialog v-model="dialogRelatorioPeriodo">
+          <q-card class="q-pa-md">
+            <div class="text-h6 q-mb-md">Relatório por Período</div>
+
+            <q-input v-model="dataInicio" label="Data Inicial" type="date" filled />
+            <q-input v-model="dataFim" label="Data Final" type="date" filled class="q-mt-md" />
+
+            <q-btn
+              class="q-mt-lg"
+              color="primary"
+              label="Gerar Relatório"
+              @click="gerarRelatorio"
+            />
+          </q-card>
+        </q-dialog>
 
         <!-- MODULO CADASTRO -->
         <div v-if="mostrarCadastro">
@@ -974,6 +1012,7 @@
 import logo from 'src/assets/logo.png'
 import usuario from 'src/assets/usuario.png'
 import { imprimirOrcamentoPorId } from 'src/utils/impressao.js'
+import { gerarRelatorioPeriodo } from 'src/utils/relatorio.js'
 import { ref, onMounted, watch } from 'vue'
 import novoCliente from 'src/models/Cliente'
 import novoItem from 'src/models/Item'
@@ -1681,6 +1720,9 @@ const emailCliente = ref('')
 const itensOrcamento = ref([])
 const itemSelecionado = ref(-1)
 const acrescimoRef = ref(null)
+const dialogRelatorioPeriodo = ref(false)
+const dataInicio = ref('')
+const dataFim = ref('')
 titulo.value = 'NOVO ORÇAMENTO'
 const colunasOrcamento = [
   {
@@ -2194,6 +2236,19 @@ function abrirCalendario() {
 
 function imprimirOrcamento(id) {
   imprimirOrcamentoPorId(id)
+}
+
+function abrirRelatorioPeriodo() {
+  dialogRelatorioPeriodo.value = true
+}
+
+async function gerarRelatorio() {
+  if (!dataInicio.value || !dataFim.value) {
+    $q.notify({ type: 'warning', message: 'Selecione as duas datas!' })
+    return
+  }
+
+  await gerarRelatorioPeriodo(dataInicio.value, dataFim.value)
 }
 
 //const router = useRouter()
