@@ -2264,10 +2264,10 @@ async function gerarRelatorio() {
   if (!dataInicio.value || !dataFim.value) {
     $q.notify({
       type: 'warning',
-      message: 'Selecione as datas!',
+      message: 'É necessário selecionar as datas do período!',
     })
     if (!dataInicio.value) DataInput.value?.focus()
-    if (!dataFim.value) DataInputFim.value?.focus()
+    else DataInputFim.value?.focus()
     return
   }
   if (dataInicio.value > dataFim.value) {
