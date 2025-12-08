@@ -1107,6 +1107,8 @@ function ocultar() {
   resumoDividas.value = false
   criarOrcamento.value = false
   listarOrcamento.value = false
+  dataInicio.value = ''
+  dataFim.value = ''
 }
 
 function trocartitulo() {
@@ -2259,7 +2261,11 @@ async function gerarRelatorio() {
     return
   }
   if (dataInicio.value > dataFim.value) {
-    showToast(`A data de inicio maior que a data final!`, 1500)
+    //showToast(`A data inicial é maior que a data final!`, 3000)
+    $q.notify({
+      type: 'warning',
+      message: 'A data inicial é maior que a data final!',
+    })
     dataFim.value = ''
     dataInicio.value = ''
     DataInput.value?.focus()
@@ -2268,7 +2274,13 @@ async function gerarRelatorio() {
 
   const ok = await gerarRelatorioPeriodo(dataInicio.value, dataFim.value)
   if (!ok) {
-    showToast(`Nenhum orçamento encontrado no período!`, 1500)
+    $q.notify({
+      type: 'warning',
+      message: 'Nenhum orçamento encontrado no período!',
+    })
+    //showToast(`Nenhum orçamento encontrado no período!`, 1500)
+    DataInput.value?.focus()
+    return
   }
   dataInicio.value = ''
   dataFim.value = ''
