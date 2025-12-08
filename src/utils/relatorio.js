@@ -9,7 +9,7 @@ export async function gerarRelatorioPeriodo(inicio, fim) {
       return
     }
 
-    // Monta o HTML do relatório (A4)
+    // Monta o HTML do relatório (A4) dkjsakljdksaljdklsajdklsajdkljs
     let conteudo = `
       <html>
       <head>
