@@ -475,7 +475,14 @@
             <div class="text-h6 q-mb-md">Relatório por Período</div>
 
             <q-input ref="DataInput" v-model="dataInicio" label="Data Inicial" type="date" filled />
-            <q-input v-model="dataFim" label="Data Final" type="date" filled class="q-mt-md" />
+            <q-input
+              ref="DataInputFim"
+              v-model="dataFim"
+              label="Data Final"
+              type="date"
+              filled
+              class="q-mt-md"
+            />
 
             <q-btn
               class="q-mt-lg q-mr-md"
@@ -1053,6 +1060,7 @@ const itens = ref([])
 const nomeInput = ref(null)
 const cpfInput = ref(null)
 const DataInput = ref(null)
+const DataInputFim = ref(null)
 const cepInput = ref(null)
 const nomeiInput = ref(null)
 const limiteInput = ref(null)
@@ -2256,8 +2264,10 @@ async function gerarRelatorio() {
   if (!dataInicio.value || !dataFim.value) {
     $q.notify({
       type: 'warning',
-      message: 'Selecione as datas!',
+      message: 'É necessário selecionar as datas do período!',
     })
+    if (!dataInicio.value) DataInput.value?.focus()
+    else DataInputFim.value?.focus()
     return
   }
   if (dataInicio.value > dataFim.value) {
@@ -2266,8 +2276,8 @@ async function gerarRelatorio() {
       type: 'warning',
       message: 'A data inicial é maior que a data final!',
     })
-    dataFim.value = ''
-    dataInicio.value = ''
+    //    dataFim.value = ''
+    //    dataInicio.value = ''
     DataInput.value?.focus()
     return
   }
