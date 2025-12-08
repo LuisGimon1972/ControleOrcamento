@@ -436,6 +436,37 @@ app.get('/orcamentos', (req, res) => {
   })
 })
 
+app.get('/orcamentos/periodo', (req, res) => {
+  const { inicio, fim } = req.query
+
+  if (!inicio || !fim) {
+    return res.status(400).json({
+      error: 'Informe os parâmetros ?inicio=YYYY-MM-DD&fim=YYYY-MM-DD',
+    })
+  }
+
+  const sql = `
+    SELECT
+      o.*,
+      c.nome AS clienteNome
+    FROM orcamentos o
+    LEFT JOIN clientes c ON c.id = o.clienteId
+    WHERE DATE(o.dataCriacao) BETWEEN DATE(?) AND DATE(?)
+    ORDER BY o.dataCriacao DESC
+  `
+
+  db.all(sql, [inicio, fim], (err, rows) => {
+    if (err) {
+      return res.status(500).json({
+        error: 'Erro ao buscar orçamentos por período',
+        details: err.message,
+      })
+    }
+
+    res.json(rows)
+  })
+})
+
 app.get('/orcamentos/:id', (req, res) => {
   const { id } = req.params
 

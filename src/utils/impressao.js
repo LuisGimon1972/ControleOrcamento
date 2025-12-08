@@ -54,9 +54,9 @@ CLIENTE : ${cliente}
 CPF Nº  : ${clientecpf}
 CADASTRO: ${data}
 VALIDADE: ${validade}
-________________________________
+================================
 ITEM             QTD    TOTAL
-________________________________
+================================
 ${itens}
 ________________________________
 SUBTOTAL:   R$ ${subtotal}
