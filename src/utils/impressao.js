@@ -1,6 +1,5 @@
 export async function imprimirOrcamentoPorId(id) {
   const dados = await buscarOrcamento(id)
-
   const texto = gerarTextoCupom(dados)
   imprimirTexto(texto)
 }
@@ -10,7 +9,6 @@ export async function buscarOrcamento(id) {
   if (!res.ok) {
     throw new Error('Erro ao buscar orçamento')
   }
-
   return await res.json()
 }
 
@@ -21,7 +19,6 @@ export function gerarTextoCupom(orc) {
   const data = orc?.dataCriacao ?? '-'
   const validade = orc?.validade ?? '-'
   const status = orc?.status ?? '-'
-
   const itens = Array.isArray(orc?.itens)
     ? orc.itens
         .map((i) => {
@@ -48,24 +45,25 @@ export function gerarTextoCupom(orc) {
     .padStart(largura)
   return `
 ================================
-        ORÇAMENTO Nº ${numero}
+     ORÇAMENTO Nº ${numero}
 ================================
 STATUS: ${status}
---------------------------------
+________________________________
+
 CLIENTE : ${cliente}
 CPF Nº  : ${clientecpf}
 CADASTRO: ${data}
 VALIDADE: ${validade}
---------------------------------
+________________________________
 ITEM             QTD    TOTAL
---------------------------------
+________________________________
 ${itens}
---------------------------------
+________________________________
 SUBTOTAL:   R$ ${subtotal}
 DESCONTO:   R$ ${desconto}
 ACRÉSCIMO:  R$ ${acrescimo}
 TOTAL:      R$ ${total}
---------------------------------
+________________________________
 
    Obrigado pela preferência!
 `
