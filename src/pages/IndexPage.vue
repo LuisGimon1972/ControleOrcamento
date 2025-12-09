@@ -128,12 +128,22 @@
         </q-item>
 
         <!-- ITEM PRINCIPAL -->
-        <q-item clickable @click="submenuRelatorios = !submenuRelatorios">
+        <q-item
+          clickable
+          :active="menuAtivo === 'listarelas'"
+          active-class="item-ativo"
+          @click="
+            () => {
+              submenuRelatorios = !submenuRelatorios
+              menuAtivo = 'listarelas'
+            }
+          "
+        >
           <q-item-section avatar>
             <q-icon name="description" />
           </q-item-section>
 
-          <q-item-section>Relatórios</q-item-section>
+          <q-item-section>Relatórios Gerales</q-item-section>
 
           <q-item-section side>
             <q-icon :name="submenuRelatorios ? 'expand_less' : 'expand_more'" />
@@ -164,11 +174,23 @@
             </q-item>
 
             <!-- Relatório geral -->
-            <q-item clickable class="q-ml-lg" @click="abrirRelatorioGeral()">
+            <q-item
+              clickable
+              :active="menuAtivo === 'listageral'"
+              active-class="item-ativo"
+              class="q-ml-lg"
+              @click="
+                () => {
+                  ocultar()
+                  abrirRelatorioGeral()
+                  menuAtivo = 'listageral'
+                }
+              "
+            >
               <q-item-section avatar>
                 <q-icon name="format_list_bulleted" />
               </q-item-section>
-              <q-item-section>Relatório Geral</q-item-section>
+              <q-item-section>Relatório Total</q-item-section>
             </q-item>
           </div>
         </q-slide-transition>
@@ -1054,7 +1076,7 @@
 import logo from 'src/assets/logo.png'
 import usuario from 'src/assets/usuario.png'
 import { imprimirOrcamentoPorId } from 'src/utils/impressao.js'
-import { gerarRelatorioPeriodo } from 'src/utils/relatorio.js'
+import { gerarRelatorioPeriodo, gerarRelatorioGeral } from 'src/utils/relatorio.js'
 import { ref, onMounted, watch } from 'vue'
 import novoCliente from 'src/models/Cliente'
 import novoItem from 'src/models/Item'
@@ -2329,7 +2351,7 @@ const submenuRelatorios = ref(false)
 
 function abrirRelatorioGeral() {
   console.log('Abrir relatório geral')
-  // outra opção
+  gerarRelatorioGeral()
 }
 
 //const router = useRouter()
