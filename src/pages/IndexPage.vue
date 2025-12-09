@@ -127,23 +127,51 @@
           <q-item-section> Listagem Orçamentos </q-item-section>
         </q-item>
 
-        <q-item
-          clickable
-          :active="menuAtivo === 'relatoriorca'"
-          active-class="item-ativo"
-          @click="
-            () => {
-              ocultar()
-              abrirRelatorioPeriodo()
-              menuAtivo = 'relatoriorca'
-            }
-          "
-        >
+        <!-- ITEM PRINCIPAL -->
+        <q-item clickable @click="submenuRelatorios = !submenuRelatorios">
           <q-item-section avatar>
-            <q-icon name="format_list_bulleted" />
+            <q-icon name="description" />
           </q-item-section>
-          <q-item-section> Relatório Orçamentos </q-item-section>
+
+          <q-item-section>Relatórios</q-item-section>
+
+          <q-item-section side>
+            <q-icon :name="submenuRelatorios ? 'expand_less' : 'expand_more'" />
+          </q-item-section>
         </q-item>
+
+        <!-- SUBMENU (ANIMADO) -->
+        <q-slide-transition>
+          <div v-if="submenuRelatorios">
+            <!-- Relatório por período -->
+            <q-item
+              clickable
+              :active="menuAtivo === 'listaorpa'"
+              active-class="item-ativo"
+              class="q-ml-lg"
+              @click="
+                () => {
+                  ocultar()
+                  abrirRelatorioPeriodo()
+                  menuAtivo = 'listaorpa'
+                }
+              "
+            >
+              <q-item-section avatar>
+                <q-icon name="event_note" />
+              </q-item-section>
+              <q-item-section>Relatório por Período</q-item-section>
+            </q-item>
+
+            <!-- Relatório geral -->
+            <q-item clickable class="q-ml-lg" @click="abrirRelatorioGeral()">
+              <q-item-section avatar>
+                <q-icon name="format_list_bulleted" />
+              </q-item-section>
+              <q-item-section>Relatório Geral</q-item-section>
+            </q-item>
+          </div>
+        </q-slide-transition>
 
         <q-item
           clickable
@@ -2296,6 +2324,12 @@ async function gerarRelatorio() {
   dataFim.value = ''
   dialogRelatorioPeriodo.value = false
   return
+}
+const submenuRelatorios = ref(false)
+
+function abrirRelatorioGeral() {
+  console.log('Abrir relatório geral')
+  // outra opção
 }
 
 //const router = useRouter()
