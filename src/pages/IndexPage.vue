@@ -173,6 +173,25 @@
               <q-item-section>Relatório por Período</q-item-section>
             </q-item>
 
+            <q-item
+              clickable
+              :active="menuAtivo === 'listastatus'"
+              active-class="item-ativo"
+              class="q-ml-lg"
+              @click="
+                () => {
+                  ocultar()
+                  abrirRelatorioStatus()
+                  menuAtivo = 'listastatus'
+                }
+              "
+            >
+              <q-item-section avatar>
+                <q-icon name="format_list_bulleted" />
+              </q-item-section>
+              <q-item-section>Relatório pelo Status</q-item-section>
+            </q-item>
+
             <!-- Relatório geral -->
             <q-item
               clickable
@@ -1076,7 +1095,11 @@
 import logo from 'src/assets/logo.png'
 import usuario from 'src/assets/usuario.png'
 import { imprimirOrcamentoPorId } from 'src/utils/impressao.js'
-import { gerarRelatorioPeriodo, gerarRelatorioGeral } from 'src/utils/relatorio.js'
+import {
+  gerarRelatorioPeriodo,
+  gerarRelatorioGeral,
+  gerarRelatorioStatus,
+} from 'src/utils/relatorio.js'
 import { ref, onMounted, watch } from 'vue'
 import novoCliente from 'src/models/Cliente'
 import novoItem from 'src/models/Item'
@@ -2352,6 +2375,24 @@ const submenuRelatorios = ref(false)
 function abrirRelatorioGeral() {
   console.log('Abrir relatório geral')
   gerarRelatorioGeral()
+}
+
+const abrirRelatorioStatus = () => {
+  $q.dialog({
+    title: 'Relatório por Status',
+    message: 'Selecione o status:',
+    options: {
+      type: 'radio',
+      model: 'Aberto',
+      items: [
+        { label: 'Aberto', value: 'ABERTO' },
+        { label: 'Em Andamento', value: 'EM ANDAMENTO' },
+        { label: 'Finalizado', value: 'FINALIZADO' },
+      ],
+    },
+  }).onOk((status) => {
+    gerarRelatorioStatus(status)
+  })
 }
 
 //const router = useRouter()

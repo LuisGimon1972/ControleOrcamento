@@ -177,6 +177,103 @@ export async function gerarRelatorioGeral() {
   }
 }
 
+export async function gerarRelatorioStatus(status) {
+  try {
+    const url = `http://localhost:3000/orcamentos/status/${status}`
+    const res = await fetch(url)
+    const dados = await res.json()
+
+    if (!dados.length) {
+      alert('Nenhum orçamento com o status selecionado.')
+      return
+    }
+
+    // ------------------------------
+    // MONTAR HTML DO RELATÓRIO A4
+    // ------------------------------
+    let conteudo = `
+      <html>
+      <head>
+        <style>
+          @page { size: A4 portrait; margin: 15mm; }
+          body { font-family: Arial; margin: 20px; }
+          h1 { text-align: center; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid #777; padding: 8px; font-size: 13px; }
+          th { background: #eee; }
+          .right { text-align: right; }
+        </style>
+      </head>
+      <body>
+
+        <h1>Relatório de Orçamentos por Status</h1>
+        <p><b>Status:</b> ${status}</p>
+
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Número</th>
+            <th>Cliente</th>
+            <th>Data</th>
+            <th>Total</th>
+          </tr>
+    `
+
+    dados.forEach((o) => {
+      const [ano, mes, dia] = o.dataCriacao.split('-')
+      const dataBR = `${dia}/${mes}/${ano}`
+
+      conteudo += `
+        <tr>
+          <td>${o.id}</td>
+          <td>${o.numero}</td>
+          <td>${o.clienteNome || '-'}</td>
+          <td>${dataBR}</td>
+          <td class="right">R$ ${Number(o.valorTotal).toFixed(2)}</td>
+        </tr>
+      `
+    })
+
+    conteudo += `
+        </table>
+
+      </body>
+      </html>
+    `
+
+    // ------------------------------
+    // IMPRIMIR VIA IFRAME INVISÍVEL
+    // ------------------------------
+
+    const iframe = document.createElement('iframe')
+    iframe.style.position = 'fixed'
+    iframe.style.width = '0'
+    iframe.style.height = '0'
+    iframe.style.border = '0'
+    iframe.style.right = '0'
+    iframe.style.bottom = '0'
+
+    document.body.appendChild(iframe)
+
+    const doc = iframe.contentWindow.document
+    doc.open()
+    doc.write(conteudo)
+    doc.close()
+
+    // Delay mínimo para o iframe carregar
+    setTimeout(() => {
+      iframe.contentWindow.focus()
+      iframe.contentWindow.print()
+
+      // Remove iframe
+      setTimeout(() => iframe.remove(), 500)
+    }, 300)
+  } catch (err) {
+    console.error(err)
+    alert('Erro ao gerar relatório por status.')
+  }
+}
+
 function formatarDataHoraBR(valor) {
   if (!valor) return '-'
 
