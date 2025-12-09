@@ -467,6 +467,31 @@ app.get('/orcamentos/periodo', (req, res) => {
   })
 })
 
+app.get('/orcamentos/status/:status', (req, res) => {
+  const { status } = req.params
+
+  const sql = `
+    SELECT
+      o.*,
+      c.nome AS clienteNome
+    FROM orcamentos o
+    LEFT JOIN clientes c ON c.id = o.clienteId
+    WHERE o.status = ?
+    ORDER BY o.id DESC
+  `
+
+  db.all(sql, [status], (err, rows) => {
+    if (err) {
+      return res.status(500).json({
+        error: 'Erro ao buscar orçamentos por status',
+        details: err.message,
+      })
+    }
+
+    res.json(rows)
+  })
+})
+
 app.get('/orcamentos/:id', (req, res) => {
   const { id } = req.params
 
