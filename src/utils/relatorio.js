@@ -7,8 +7,6 @@ export async function gerarRelatorioPeriodo(inicio, fim) {
     if (!dados.length) {
       return false
     }
-
-    // Monta o HTML do relatório (A4) dkjsakljdksaljdklsajdklsajdkljs
     let conteudo = `
       <html>
       <head>
@@ -17,14 +15,14 @@ export async function gerarRelatorioPeriodo(inicio, fim) {
           body { font-family: Arial; }
           h1 { text-align: center; }
           table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-          th, td { border: 1px solid #777; padding: 8px; font-size: 13px; }
+          th, td { border: 1px solid #777; padding: 8px; font-size: 11px; }
           th { background: #eee; }
         </style>
       </head>
       <body>
 
         <h1>Relatório de Orçamentos</h1>
-        <p><b>Período:</b> ${inicio} até ${fim}</p>
+        <p><b>Período:</b> ${formatarDataBR(inicio)} até ${formatarDataBR(fim)}</p>
 
         <table>
           <tr>
@@ -32,6 +30,7 @@ export async function gerarRelatorioPeriodo(inicio, fim) {
             <th>Número</th>
             <th>Cliente</th>
             <th>Data</th>
+            <th>Validade</th>
             <th>Total</th>
             <th>Status</th>
           </tr>
@@ -43,8 +42,9 @@ export async function gerarRelatorioPeriodo(inicio, fim) {
           <td>${o.id}</td>
           <td>${o.numero}</td>
           <td>${o.clienteNome || '-'}</td>
-          <td>${o.dataCriacao}</td>
-          <td>R$ ${Number(o.valorTotal).toFixed(2)}</td>
+          <td>${formatarDataHoraBR(o.dataCriacao)}</td>
+          <td>${o.validade}</td>
+          <td style="text-align: right;">R$ ${Number(o.valorTotal).toFixed(2)}</td>
           <td>${o.status}</td>
         </tr>
       `
@@ -86,4 +86,30 @@ export async function gerarRelatorioPeriodo(inicio, fim) {
     console.error('Erro ao gerar relatório:', err)
     return false
   }
+}
+
+function formatarDataHoraBR(valor) {
+  if (!valor) return '-'
+
+  const data = new Date(valor)
+
+  if (isNaN(data)) return valor
+
+  const dia = String(data.getDate()).padStart(2, '0')
+  const mes = String(data.getMonth() + 1).padStart(2, '0')
+  const ano = data.getFullYear()
+
+  const hora = String(data.getHours()).padStart(2, '0')
+  const min = String(data.getMinutes()).padStart(2, '0')
+
+  return `${dia}/${mes}/${ano} ${hora}:${min}`
+}
+
+function formatarDataBR(dataISO) {
+  const d = new Date(dataISO)
+  const dia = String(d.getDate()).padStart(2, '0')
+  const mes = String(d.getMonth() + 1).padStart(2, '0')
+  const ano = String(d.getFullYear()).slice(0)
+
+  return `${dia}/${mes}/${ano}`
 }

@@ -2271,13 +2271,12 @@ async function gerarRelatorio() {
     return
   }
   if (dataInicio.value > dataFim.value) {
-    //showToast(`A data inicial é maior que a data final!`, 3000)
     $q.notify({
       type: 'warning',
       message: 'A data inicial é maior que a data final!',
     })
-    //    dataFim.value = ''
-    //    dataInicio.value = ''
+    dataFim.value = ''
+    dataInicio.value = ''
     DataInput.value?.focus()
     return
   }
@@ -2288,7 +2287,8 @@ async function gerarRelatorio() {
       type: 'warning',
       message: 'Nenhum orçamento encontrado no período!',
     })
-    //showToast(`Nenhum orçamento encontrado no período!`, 1500)
+    dataInicio.value = ''
+    dataFim.value = ''
     DataInput.value?.focus()
     return
   }
