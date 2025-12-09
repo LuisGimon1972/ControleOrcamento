@@ -2386,7 +2386,7 @@ const abrirRelatorioStatus = () => {
       model: 'Aberto',
       items: [
         { label: 'Aberto', value: 'ABERTO' },
-        { label: 'Em Andamento', value: 'EM ANDAMENTO' },
+        { label: 'Em Negociação', value: 'EM NEGOCIAÇÃO' },
         { label: 'Finalizado', value: 'FINALIZADO' },
       ],
     },
