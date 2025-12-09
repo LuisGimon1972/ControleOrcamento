@@ -477,7 +477,7 @@ app.get('/orcamentos/status/:status', (req, res) => {
     FROM orcamentos o
     LEFT JOIN clientes c ON c.id = o.clienteId
     WHERE o.status = ?
-    ORDER BY o.id DESC
+    ORDER BY clienteNome ASC
   `
 
   db.all(sql, [status], (err, rows) => {
