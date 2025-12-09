@@ -214,7 +214,8 @@ export async function gerarRelatorioStatus(status) {
             <th>ID</th>
             <th>Número</th>
             <th>Cliente</th>
-            <th>Data</th>
+            <th>Cadastro</th>
+            <th>Validade</th>
             <th>Total</th>
           </tr>
     `
@@ -229,6 +230,7 @@ export async function gerarRelatorioStatus(status) {
           <td>${o.numero}</td>
           <td>${o.clienteNome || '-'}</td>
           <td>${dataBR}</td>
+          <td>${o.validade}</td>
           <td class="right">R$ ${Number(o.valorTotal).toFixed(2)}</td>
         </tr>
       `
