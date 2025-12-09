@@ -143,7 +143,7 @@
             <q-icon name="description" />
           </q-item-section>
 
-          <q-item-section>Relatórios Gerales</q-item-section>
+          <q-item-section>Relatórios Gerais</q-item-section>
 
           <q-item-section side>
             <q-icon :name="submenuRelatorios ? 'expand_less' : 'expand_more'" />
