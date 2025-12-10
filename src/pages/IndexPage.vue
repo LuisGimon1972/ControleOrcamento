@@ -13,7 +13,7 @@
     <!-- CONTEÚDO -->
     <div class="layout-conteudo" style="min-height: 80vh">
       <!-- MENU LATERAL -->
-      <div class="painel-esquerdo" style="width: 288px; padding: 20px">
+      <div class="painel-esquerdo" style="width: 305px; padding: 20px">
         <q-item
           clickable
           :class="{ 'menu-ativo': menuAtivo === 'cadastro' }"
@@ -143,7 +143,7 @@
             <q-icon name="description" />
           </q-item-section>
 
-          <q-item-section>Relatórios Gerais</q-item-section>
+          <q-item-section>Relatórios Orçamento</q-item-section>
 
           <q-item-section side>
             <q-icon :name="submenuRelatorios ? 'expand_less' : 'expand_more'" />
