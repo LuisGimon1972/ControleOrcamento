@@ -556,15 +556,15 @@
             <q-btn
               class="q-mt-lg q-mr-md"
               color="primary"
-              label="Gerar Relatório"
-              @click="gerarRelatorio"
+              label="Fechar"
+              @click="dialogRelatorioPeriodo = false"
             />
 
             <q-btn
               class="q-mt-lg"
               color="primary"
-              label="Fechar"
-              @click="dialogRelatorioPeriodo = false"
+              label="Gerar Relatório"
+              @click="gerarRelatorio"
             />
           </q-card>
         </q-dialog>
@@ -2381,18 +2381,24 @@ const abrirRelatorioStatus = () => {
   $q.dialog({
     title: 'Relatório por Status',
     message: 'Selecione o status:',
+    cancel: true, // 👉 adiciona botão Cancelar/Fechar
+    persistent: false, // (opcional) deixa fechar clicando fora
     options: {
       type: 'radio',
-      model: 'Aberto',
+      model: 'ABERTO',
       items: [
         { label: 'Aberto', value: 'ABERTO' },
         { label: 'Em Negociação', value: 'EM NEGOCIAÇÃO' },
         { label: 'Finalizado', value: 'FINALIZADO' },
       ],
     },
-  }).onOk((status) => {
-    gerarRelatorioStatus(status)
   })
+    .onOk((status) => {
+      gerarRelatorioStatus(status)
+    })
+    .onCancel(() => {
+      console.log('Fechado')
+    })
 }
 
 //const router = useRouter()
